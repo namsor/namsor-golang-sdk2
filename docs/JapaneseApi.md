@@ -8,7 +8,9 @@ Method | HTTP request | Description
 [**GenderJapaneseNameFullBatch**](JapaneseApi.md#GenderJapaneseNameFullBatch) | **Post** /api2/json/genderJapaneseNameFullBatch | Infer the likely gender of up to 100 full names
 [**GenderJapaneseNamePinyin**](JapaneseApi.md#GenderJapaneseNamePinyin) | **Get** /api2/json/genderJapaneseName/{japaneseSurname}/{japaneseGivenName} | Infer the likely gender of a Japanese name in LATIN (Pinyin).
 [**GenderJapaneseNamePinyinBatch**](JapaneseApi.md#GenderJapaneseNamePinyinBatch) | **Post** /api2/json/genderJapaneseNameBatch | Infer the likely gender of up to 100 Japanese names in LATIN (Pinyin).
-[**JapaneseNameKanjiCandidates**](JapaneseApi.md#JapaneseNameKanjiCandidates) | **Get** /api2/json/japaneseNameKanjiCandidates/{japaneseSurnameLatin}/{japaneseGivenNameLatin} | Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae
+[**JapaneseNameGenderKanjiCandidatesBatch**](JapaneseApi.md#JapaneseNameGenderKanjiCandidatesBatch) | **Post** /api2/json/japaneseNameGenderKanjiCandidatesBatch | Identify japanese name candidates in KANJI, based on the romanized name (firstName &#x3D; japaneseGivenName; lastName&#x3D;japaneseSurname) with KNOWN gender, ex. Yamamoto Sanae
+[**JapaneseNameKanjiCandidates**](JapaneseApi.md#JapaneseNameKanjiCandidates) | **Get** /api2/json/japaneseNameKanjiCandidates/{japaneseSurnameLatin}/{japaneseGivenNameLatin}/{knownGender} | Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae - and a known gender.
+[**JapaneseNameKanjiCandidates1**](JapaneseApi.md#JapaneseNameKanjiCandidates1) | **Get** /api2/json/japaneseNameKanjiCandidates/{japaneseSurnameLatin}/{japaneseGivenNameLatin} | Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae
 [**JapaneseNameKanjiCandidatesBatch**](JapaneseApi.md#JapaneseNameKanjiCandidatesBatch) | **Post** /api2/json/japaneseNameKanjiCandidatesBatch | Identify japanese name candidates in KANJI, based on the romanized name (firstName &#x3D; japaneseGivenName; lastName&#x3D;japaneseSurname), ex. Yamamoto Sanae
 [**JapaneseNameLatinCandidates**](JapaneseApi.md#JapaneseNameLatinCandidates) | **Get** /api2/json/japaneseNameLatinCandidates/{japaneseSurnameKanji}/{japaneseGivenNameKanji} | Romanize japanese name, based on the name in Kanji.
 [**JapaneseNameLatinCandidatesBatch**](JapaneseApi.md#JapaneseNameLatinCandidatesBatch) | **Post** /api2/json/japaneseNameLatinCandidatesBatch | Romanize japanese names, based on the name in KANJI
@@ -138,8 +140,69 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **JapaneseNameGenderKanjiCandidatesBatch**
+> BatchNameMatchCandidatesOut JapaneseNameGenderKanjiCandidatesBatch(ctx, optional)
+Identify japanese name candidates in KANJI, based on the romanized name (firstName = japaneseGivenName; lastName=japaneseSurname) with KNOWN gender, ex. Yamamoto Sanae
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+ **optional** | ***JapaneseNameGenderKanjiCandidatesBatchOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a JapaneseNameGenderKanjiCandidatesBatchOpts struct
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **batchFirstLastNameIn** | [**optional.Interface of BatchFirstLastNameIn**](BatchFirstLastNameIn.md)| A list of personal japanese names in LATIN, firstName &#x3D; japaneseGivenName; lastName&#x3D;japaneseSurname and known gender | 
+
+### Return type
+
+[**BatchNameMatchCandidatesOut**](BatchNameMatchCandidatesOut.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **JapaneseNameKanjiCandidates**
-> RomanizedNameOut JapaneseNameKanjiCandidates(ctx, japaneseSurnameLatin, japaneseGivenNameLatin)
+> RomanizedNameOut JapaneseNameKanjiCandidates(ctx, japaneseSurnameLatin, japaneseGivenNameLatin, knownGender)
+Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae - and a known gender.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **japaneseSurnameLatin** | **string**|  | 
+  **japaneseGivenNameLatin** | **string**|  | 
+  **knownGender** | **string**|  | 
+
+### Return type
+
+[**RomanizedNameOut**](RomanizedNameOut.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **JapaneseNameKanjiCandidates1**
+> RomanizedNameOut JapaneseNameKanjiCandidates1(ctx, japaneseSurnameLatin, japaneseGivenNameLatin)
 Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae
 
 ### Required Parameters

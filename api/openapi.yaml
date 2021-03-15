@@ -13,7 +13,7 @@ info:
     name: NamSorAPI_Lic_v0.0.7
     url: https://v2.namsor.com/NamSorAPIv2/assets/pdf/201803_NamSor_API_Terms_v007.pdf
   title: NamSor API v2
-  version: 2.0.11
+  version: 2.0.13
 externalDocs:
   description: NamSor API client SDKs v2 for Java, Python
   url: https://github.com/namsor
@@ -35,67 +35,6 @@ tags:
 - description: Administrative, system management.
   name: admin
 paths:
-  /api2/json/nameType/{properNoun}:
-    get:
-      operationId: nameType
-      parameters:
-      - explode: false
-        in: path
-        name: properNoun
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProperNounCategorizedOut'
-          description: A typed name.
-        401:
-          description: Missing or incorrect API Key
-        403:
-          description: API Limit Reached or API Key Disabled
-      security:
-      - api_key: []
-      summary: Infer the likely type of a proper noun (personal name, brand name, place name etc.)
-      tags:
-      - general
-  /api2/json/nameType/{properNoun}/{countryIso2}:
-    get:
-      operationId: nameType_1
-      parameters:
-      - explode: false
-        in: path
-        name: properNoun
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: countryIso2
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProperNounCategorizedOut'
-          description: A typed name.
-        401:
-          description: Missing or incorrect API Key
-        403:
-          description: API Limit Reached or API Key Disabled
-      security:
-      - api_key: []
-      summary: Infer the likely type of a proper noun (personal name, brand name, place name etc.)
-      tags:
-      - general
   /api2/json/country/{personalNameFull}:
     get:
       operationId: country
@@ -161,6 +100,33 @@ paths:
         NZ and other melting-pots : use ''diaspora'' instead.'
       tags:
       - personal
+  /api2/json/nameType/{properNoun}:
+    get:
+      operationId: nameType
+      parameters:
+      - explode: false
+        in: path
+        name: properNoun
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProperNounCategorizedOut'
+          description: A typed name.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: Infer the likely type of a proper noun (personal name, brand name, place name etc.)
+      tags:
+      - general
   /api2/json/stripeConnect:
     get:
       operationId: stripeConnect
@@ -834,40 +800,6 @@ paths:
       summary: Add usage credits to an API Key.
       tags:
       - admin
-  /api2/json/redeployUI/{live}:
-    get:
-      operationId: redeployUI
-      parameters:
-      - explode: false
-        in: path
-        name: live
-        required: true
-        schema:
-          type: boolean
-        style: simple
-      responses:
-        200:
-          description: Redeploy UI from DEV.
-        401:
-          description: Missing or incorrect API Key
-      security:
-      - api_key: []
-      summary: Redeploy UI from current dev branch.
-      tags:
-      - admin
-  /api2/json/redeployUI:
-    get:
-      operationId: redeployUI_1
-      responses:
-        200:
-          description: Redeploy UI from DEV.
-        401:
-          description: Missing or incorrect API Key
-      security:
-      - api_key: []
-      summary: Redeploy UI from current dev branch.
-      tags:
-      - admin
   /api2/json/invalidateCache:
     get:
       operationId: invalidateCache
@@ -1007,6 +939,179 @@ paths:
       summary: Setting an API Key to a corporate status.
       tags:
       - admin
+  /api2/json/nameTypeGeo/{properNoun}/{countryIso2}:
+    get:
+      operationId: nameTypeGeo
+      parameters:
+      - explode: false
+        in: path
+        name: properNoun
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: countryIso2
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProperNounCategorizedOut'
+          description: A typed name.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: Infer the likely type of a proper noun (personal name, brand name, place name etc.)
+      tags:
+      - general
+  /api2/json/nameTypeBatch:
+    post:
+      operationId: nameTypeBatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchNameIn'
+        description: A list of proper names
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchProperNounCategorizedOut'
+          description: A list of commonTypeized names.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: Infer the likely common type of up to 100 proper nouns (personal name, brand name, place name etc.)
+      tags:
+      - general
+  /api2/json/nameTypeGeoBatch:
+    post:
+      operationId: nameTypeGeoBatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchNameGeoIn'
+        description: A list of proper names
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchProperNounCategorizedOut'
+          description: A list of commonTypeized names.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: Infer the likely common type of up to 100 proper nouns (personal name, brand name, place name etc.)
+      tags:
+      - general
+  /api2/json/corridor/{countryIso2From}/{firstNameFrom}/{lastNameFrom}/{countryIso2To}/{firstNameTo}/{lastNameTo}:
+    get:
+      operationId: corridor
+      parameters:
+      - explode: false
+        in: path
+        name: countryIso2From
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: firstNameFrom
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: lastNameFrom
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: countryIso2To
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: firstNameTo
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: lastNameTo
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorridorOut'
+          description: Two classified names.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: '[USES 20 UNITS PER NAME COUPLE] Infer several classifications for
+        a cross border interaction between names (ex. remit, travel, intl com)'
+      tags:
+      - personal
+  /api2/json/corridorBatch:
+    post:
+      operationId: corridorBatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchCorridorIn'
+        description: A list of name pairs, with country code (nameFrom -> nameTo).
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchCorridorOut'
+          description: A list of classified name pairs.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: '[USES 20 UNITS PER NAME PAIR] Infer several classifications for up
+        to 100 cross border interaction between names (ex. remit, travel, intl com)'
+      tags:
+      - personal
   /api2/json/gender/{firstName}/{lastName}:
     get:
       operationId: gender
@@ -2096,9 +2201,50 @@ paths:
         Yamamoto Sanae '
       tags:
       - japanese
-  /api2/json/japaneseNameKanjiCandidates/{japaneseSurnameLatin}/{japaneseGivenNameLatin}:
+  /api2/json/japaneseNameKanjiCandidates/{japaneseSurnameLatin}/{japaneseGivenNameLatin}/{knownGender}:
     get:
       operationId: japaneseNameKanjiCandidates
+      parameters:
+      - explode: false
+        in: path
+        name: japaneseSurnameLatin
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: japaneseGivenNameLatin
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: knownGender
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RomanizedNameOut'
+          description: A romanized name.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae - and a known gender.
+      tags:
+      - japanese
+  /api2/json/japaneseNameKanjiCandidates/{japaneseSurnameLatin}/{japaneseGivenNameLatin}:
+    get:
+      operationId: japaneseNameKanjiCandidates_1
       parameters:
       - explode: false
         in: path
@@ -2187,6 +2333,31 @@ paths:
       security:
       - api_key: []
       summary: Identify japanese name candidates in KANJI, based on the romanized name (firstName = japaneseGivenName; lastName=japaneseSurname), ex. Yamamoto Sanae
+      tags:
+      - japanese
+  /api2/json/japaneseNameGenderKanjiCandidatesBatch:
+    post:
+      operationId: japaneseNameGenderKanjiCandidatesBatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchFirstLastNameIn'
+        description: A list of personal japanese names in LATIN, firstName = japaneseGivenName; lastName=japaneseSurname and known gender
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchNameMatchCandidatesOut'
+          description: A list of genderized names.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: Identify japanese name candidates in KANJI, based on the romanized name (firstName = japaneseGivenName; lastName=japaneseSurname) with KNOWN gender, ex. Yamamoto Sanae
       tags:
       - japanese
   /api2/json/japaneseNameLatinCandidatesBatch:
@@ -2731,6 +2902,8 @@ components:
           probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
           likelyGender: male
           id: id
+          category: category
+          script: script
         - firstName: firstName
           lastName: lastName
           genderScale: 0.80082819046101150206595775671303272247314453125
@@ -2738,6 +2911,8 @@ components:
           probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
           likelyGender: male
           id: id
+          category: category
+          script: script
       properties:
         personalNames:
           items:
@@ -2874,12 +3049,13 @@ components:
         phoneNumber: phoneNumber
         id: id
         FirstLastNameOriginedOut:
+          lastName: lastName
+          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+          script: script
           regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          lastName: lastName
           score: 0.80082819046101150206595775671303272247314453125
-          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -2887,6 +3063,7 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
+          category: category
           countryOriginAlt: countryOriginAlt
       properties:
         id:
@@ -2959,23 +3136,36 @@ components:
       example:
         firstName: firstName
         lastName: lastName
+        orderOption: orderOption
         matchCandidates:
-        - candidateName: candidateName
+        - predScoreGivenName: 6.02745618307040320615897144307382404804229736328125
+          candidateName: candidateName
           probability: 0.80082819046101150206595775671303272247314453125
-        - candidateName: candidateName
+          predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
+        - predScoreGivenName: 6.02745618307040320615897144307382404804229736328125
+          candidateName: candidateName
           probability: 0.80082819046101150206595775671303272247314453125
+          predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
         id: id
+        category: category
+        script: script
       properties:
+        script:
+          type: string
         id:
           type: string
         firstName:
           type: string
         lastName:
           type: string
+        orderOption:
+          type: string
         matchCandidates:
           items:
             $ref: '#/components/schemas/NameMatchCandidateOut'
           type: array
+        category:
+          type: string
       type: object
       xml:
         name: NameMatchCandidatesOut
@@ -3065,6 +3255,22 @@ components:
       type: object
       xml:
         name: APIClassifierOut
+    NameIn:
+      example:
+        name: name
+        id: id
+      properties:
+        id:
+          type: string
+          xml:
+            attribute: true
+        name:
+          type: string
+          xml:
+            attribute: true
+      type: object
+      xml:
+        name: NameIn
     APIPlanSubscriptionOut:
       example:
         stripeStatus: stripeStatus
@@ -3195,7 +3401,11 @@ components:
         probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
         likelyGender: male
         id: id
+        category: category
+        script: script
       properties:
+        script:
+          type: string
         id:
           type: string
         firstName:
@@ -3219,6 +3429,8 @@ components:
         probabilityCalibrated:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: FirstLastNameGenderedOut
@@ -3266,26 +3478,30 @@ components:
         personalNames:
         - firstName: firstName
           lastName: lastName
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 5.962133916683182377482808078639209270477294921875
           ethnicity: ethnicity
           lifted: true
           ethnicityAlt: ethnicityAlt
           id: id
           countryIso2: countryIso2
+          category: category
           ethnicitiesTop:
           - ethnicitiesTop
           - ethnicitiesTop
+          script: script
         - firstName: firstName
           lastName: lastName
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 5.962133916683182377482808078639209270477294921875
           ethnicity: ethnicity
           lifted: true
           ethnicityAlt: ethnicityAlt
           id: id
           countryIso2: countryIso2
+          category: category
           ethnicitiesTop:
           - ethnicitiesTop
           - ethnicitiesTop
+          script: script
       properties:
         personalNames:
           items:
@@ -3489,32 +3705,36 @@ components:
     BatchPersonalNameGeoOut:
       example:
         personalNames:
-        - score: 0.80082819046101150206595775671303272247314453125
-          country: country
+        - country: country
           topRegion: topRegion
           subRegion: subRegion
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+          countryAlt: countryAlt
+          script: script
+          score: 0.80082819046101150206595775671303272247314453125
           countriesTop:
           - countriesTop
           - countriesTop
           name: name
-          countryAlt: countryAlt
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           id: id
           region: region
-        - score: 0.80082819046101150206595775671303272247314453125
-          country: country
+          category: category
+        - country: country
           topRegion: topRegion
           subRegion: subRegion
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+          countryAlt: countryAlt
+          script: script
+          score: 0.80082819046101150206595775671303272247314453125
           countriesTop:
           - countriesTop
           - countriesTop
           name: name
-          countryAlt: countryAlt
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           id: id
           region: region
+          category: category
       properties:
         personalNames:
           items:
@@ -3540,8 +3760,12 @@ components:
         commonTypeAlt: commonTypeAlt
         name: name
         id: id
+        category: category
+        script: script
         commonType: commonType
       properties:
+        script:
+          type: string
         id:
           type: string
         name:
@@ -3553,6 +3777,8 @@ components:
         score:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: ProperNounCategorizedOut
@@ -3615,7 +3841,11 @@ components:
         name: name
         likelyGender: male
         id: id
+        category: category
+        script: script
       properties:
+        script:
+          type: string
         id:
           type: string
         name:
@@ -3637,18 +3867,21 @@ components:
         probabilityCalibrated:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: PersonalNameGenderedOut
     FirstLastNameOriginedOut:
       description: Represents the output of inferring the LIKELY country of Origin from a personal name.
       example:
+        lastName: lastName
+        probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+        script: script
         regionOrigin: regionOrigin
         topRegionOrigin: topRegionOrigin
         firstName: firstName
-        lastName: lastName
         score: 0.80082819046101150206595775671303272247314453125
-        probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
         subRegionOrigin: subRegionOrigin
         probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
         countriesOriginTop:
@@ -3656,8 +3889,11 @@ components:
         - countriesOriginTop
         id: id
         countryOrigin: countryOrigin
+        category: category
         countryOriginAlt: countryOriginAlt
       properties:
+        script:
+          type: string
         id:
           type: string
         firstName:
@@ -3695,9 +3931,28 @@ components:
         probabilityAltCalibrated:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: FirstLastNameOriginedOut
+    BatchNameGeoIn:
+      example:
+        properNouns:
+        - name: name
+          id: id
+          countryIso2: countryIso2
+        - name: name
+          id: id
+          countryIso2: countryIso2
+      properties:
+        properNouns:
+          items:
+            $ref: '#/components/schemas/NameGeoIn'
+          type: array
+      type: object
+      xml:
+        name: BatchNameGeoIn
     BatchFirstLastNameGenderIn:
       properties:
         personalNames:
@@ -3748,6 +4003,71 @@ components:
       type: object
       xml:
         name: InvoiceItemOut
+    CorridorOut:
+      description: Represent multiple classifications for corridor sender and receiver (gender, country, origin, diaspora)
+      example:
+        FirstLastNameDiasporaedOut:
+          firstName: firstName
+          lastName: lastName
+          score: 5.962133916683182377482808078639209270477294921875
+          ethnicity: ethnicity
+          lifted: true
+          ethnicityAlt: ethnicityAlt
+          id: id
+          countryIso2: countryIso2
+          category: category
+          ethnicitiesTop:
+          - ethnicitiesTop
+          - ethnicitiesTop
+          script: script
+        FirstLastNameGenderedOut:
+          firstName: firstName
+          lastName: lastName
+          genderScale: 0.80082819046101150206595775671303272247314453125
+          score: 6.02745618307040320615897144307382404804229736328125
+          probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
+          likelyGender: male
+          id: id
+          category: category
+          script: script
+        id: id
+        category: category
+        script: script
+        FirstLastNameOriginedOut:
+          lastName: lastName
+          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+          script: script
+          regionOrigin: regionOrigin
+          topRegionOrigin: topRegionOrigin
+          firstName: firstName
+          score: 0.80082819046101150206595775671303272247314453125
+          subRegionOrigin: subRegionOrigin
+          probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
+          countriesOriginTop:
+          - countriesOriginTop
+          - countriesOriginTop
+          id: id
+          countryOrigin: countryOrigin
+          category: category
+          countryOriginAlt: countryOriginAlt
+      properties:
+        id:
+          type: string
+          xml:
+            attribute: true
+        FirstLastNameGenderedOut:
+          $ref: '#/components/schemas/FirstLastNameGenderedOut'
+        FirstLastNameOriginedOut:
+          $ref: '#/components/schemas/FirstLastNameOriginedOut'
+        FirstLastNameDiasporaedOut:
+          $ref: '#/components/schemas/FirstLastNameDiasporaedOut'
+        script:
+          type: string
+        category:
+          type: string
+      type: object
+      xml:
+        name: CorridorOut
     BatchNameMatchedOut:
       properties:
         matchedNames:
@@ -3757,34 +4077,39 @@ components:
       type: object
       xml:
         name: BatchNameMatchedOut
-    DeployUIOut:
-      properties:
-        errorMessage:
-          type: string
-        succeeded:
-          type: boolean
-      type: object
-      xml:
-        name: DeployUIOut
     BatchNameMatchCandidatesOut:
       example:
         namesAndMatchCandidates:
         - firstName: firstName
           lastName: lastName
+          orderOption: orderOption
           matchCandidates:
-          - candidateName: candidateName
+          - predScoreGivenName: 6.02745618307040320615897144307382404804229736328125
+            candidateName: candidateName
             probability: 0.80082819046101150206595775671303272247314453125
-          - candidateName: candidateName
+            predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
+          - predScoreGivenName: 6.02745618307040320615897144307382404804229736328125
+            candidateName: candidateName
             probability: 0.80082819046101150206595775671303272247314453125
+            predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
           id: id
+          category: category
+          script: script
         - firstName: firstName
           lastName: lastName
+          orderOption: orderOption
           matchCandidates:
-          - candidateName: candidateName
+          - predScoreGivenName: 6.02745618307040320615897144307382404804229736328125
+            candidateName: candidateName
             probability: 0.80082819046101150206595775671303272247314453125
-          - candidateName: candidateName
+            predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
+          - predScoreGivenName: 6.02745618307040320615897144307382404804229736328125
+            candidateName: candidateName
             probability: 0.80082819046101150206595775671303272247314453125
+            predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
           id: id
+          category: category
+          script: script
       properties:
         namesAndMatchCandidates:
           items:
@@ -3801,8 +4126,12 @@ components:
             firstName: firstName
             lastName: lastName
             id: id
+            category: category
+            script: script
           name: name
           id: id
+          category: category
+          script: script
           nameParserTypeAlt: nameParserTypeAlt
           nameParserType: nameParserType
         - score: 0.80082819046101150206595775671303272247314453125
@@ -3810,8 +4139,12 @@ components:
             firstName: firstName
             lastName: lastName
             id: id
+            category: category
+            script: script
           name: name
           id: id
+          category: category
+          script: script
           nameParserTypeAlt: nameParserTypeAlt
           nameParserType: nameParserType
       properties:
@@ -3827,16 +4160,20 @@ components:
       example:
         firstName: firstName
         lastName: lastName
-        score: 0.80082819046101150206595775671303272247314453125
+        score: 5.962133916683182377482808078639209270477294921875
         ethnicity: ethnicity
         lifted: true
         ethnicityAlt: ethnicityAlt
         id: id
         countryIso2: countryIso2
+        category: category
         ethnicitiesTop:
         - ethnicitiesTop
         - ethnicitiesTop
+        script: script
       properties:
+        script:
+          type: string
         id:
           type: string
         firstName:
@@ -3869,6 +4206,8 @@ components:
             description: List ethnicities (top 10)
             type: string
           type: array
+        category:
+          type: string
       type: object
       xml:
         name: FirstLastNameDiasporaedOut
@@ -3881,12 +4220,16 @@ components:
           name: name
           likelyGender: male
           id: id
+          category: category
+          script: script
         - genderScale: 0.80082819046101150206595775671303272247314453125
           score: 6.02745618307040320615897144307382404804229736328125
           probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
           name: name
           likelyGender: male
           id: id
+          category: category
+          script: script
       properties:
         personalNames:
           items:
@@ -4027,6 +4370,39 @@ components:
       type: object
       xml:
         name: NamSorCounterOut
+    BatchCorridorIn:
+      example:
+        corridorFromTo:
+        - firstLastNameGeoTo:
+            firstName: firstName
+            lastName: lastName
+            id: id
+            countryIso2: countryIso2
+          id: id
+          firstLastNameGeoFrom:
+            firstName: firstName
+            lastName: lastName
+            id: id
+            countryIso2: countryIso2
+        - firstLastNameGeoTo:
+            firstName: firstName
+            lastName: lastName
+            id: id
+            countryIso2: countryIso2
+          id: id
+          firstLastNameGeoFrom:
+            firstName: firstName
+            lastName: lastName
+            id: id
+            countryIso2: countryIso2
+      properties:
+        corridorFromTo:
+          items:
+            $ref: '#/components/schemas/CorridorIn'
+          type: array
+      type: object
+      xml:
+        name: BatchCorridorIn
     SourceDetailedMetricsOut:
       description: Simple metrics on source, with details by classifier.
       properties:
@@ -4104,6 +4480,21 @@ components:
       type: object
       xml:
         name: APIServicesOut
+    BatchNameIn:
+      example:
+        properNouns:
+        - name: name
+          id: id
+        - name: name
+          id: id
+      properties:
+        properNouns:
+          items:
+            $ref: '#/components/schemas/NameIn'
+          type: array
+      type: object
+      xml:
+        name: BatchNameIn
     InvoiceOut:
       example:
         dueDate: 2000-01-23T04:56:07.000+00:00
@@ -4216,12 +4607,18 @@ components:
         firstName: firstName
         lastName: lastName
         id: id
+        category: category
+        script: script
       properties:
+        script:
+          type: string
         id:
           type: string
         firstName:
           type: string
         lastName:
+          type: string
+        category:
           type: string
       type: object
       xml:
@@ -4240,6 +4637,8 @@ components:
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           id: id
+          category: category
+          script: script
           raceEthnicity: W_NL
         - firstName: firstName
           lastName: lastName
@@ -4251,6 +4650,8 @@ components:
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           id: id
+          category: category
+          script: script
           raceEthnicity: W_NL
       properties:
         personalNames:
@@ -4456,12 +4857,13 @@ components:
           phoneNumber: phoneNumber
           id: id
           FirstLastNameOriginedOut:
+            lastName: lastName
+            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+            script: script
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            lastName: lastName
             score: 0.80082819046101150206595775671303272247314453125
-            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -4469,18 +4871,20 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
+            category: category
             countryOriginAlt: countryOriginAlt
         - firstName: firstName
           lastName: lastName
           phoneNumber: phoneNumber
           id: id
           FirstLastNameOriginedOut:
+            lastName: lastName
+            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+            script: script
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            lastName: lastName
             score: 0.80082819046101150206595775671303272247314453125
-            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -4488,6 +4892,7 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
+            category: category
             countryOriginAlt: countryOriginAlt
       properties:
         personalNamesWithPhoneNumbers:
@@ -4526,6 +4931,27 @@ components:
       type: object
       xml:
         name: APIPlansOut
+    NameGeoIn:
+      example:
+        name: name
+        id: id
+        countryIso2: countryIso2
+      properties:
+        id:
+          type: string
+          xml:
+            attribute: true
+        name:
+          type: string
+          xml:
+            attribute: true
+        countryIso2:
+          type: string
+          xml:
+            attribute: true
+      type: object
+      xml:
+        name: NameGeoIn
     FirstLastNamePhoneCodedOut:
       description: Represents the output of inferring the LIKELY country and phone code from a personal name and phone number.
       example:
@@ -4533,6 +4959,7 @@ components:
         originCountryIso2Alt: originCountryIso2Alt
         phoneCountryIso2Verified: phoneCountryIso2Verified
         verified: true
+        script: script
         firstName: firstName
         score: 1.46581298050294517310021547018550336360931396484375
         phoneNumber: phoneNumber
@@ -4544,7 +4971,10 @@ components:
         internationalPhoneNumberVerified: internationalPhoneNumberVerified
         phoneCountryCodeAlt: 6
         countryIso2: countryIso2
+        category: category
       properties:
+        script:
+          type: string
         id:
           type: string
         firstName:
@@ -4578,6 +5008,8 @@ components:
           type: number
         countryIso2:
           type: string
+        category:
+          type: string
       type: object
       xml:
         name: FirstLastNamePhoneCodedOut
@@ -4591,8 +5023,6 @@ components:
           $ref: '#/components/schemas/FirstLastNameIn'
         name2:
           $ref: '#/components/schemas/PersonalNameIn'
-        name:
-          type: string
       type: object
       xml:
         name: MatchPersonalFirstLastNameIn
@@ -4603,11 +5033,17 @@ components:
           firstName: firstName
           lastName: lastName
           id: id
+          category: category
+          script: script
         name: name
         id: id
+        category: category
+        script: script
         nameParserTypeAlt: nameParserTypeAlt
         nameParserType: nameParserType
       properties:
+        script:
+          type: string
         id:
           type: string
         name:
@@ -4621,6 +5057,8 @@ components:
         score:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: PersonalNameParsedOut
@@ -4678,12 +5116,13 @@ components:
       description: Represents the output of inferring the LIKELY origin from a list of personal names.
       example:
         personalNames:
-        - regionOrigin: regionOrigin
+        - lastName: lastName
+          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+          script: script
+          regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          lastName: lastName
           score: 0.80082819046101150206595775671303272247314453125
-          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -4691,13 +5130,15 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
+          category: category
           countryOriginAlt: countryOriginAlt
-        - regionOrigin: regionOrigin
+        - lastName: lastName
+          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+          script: script
+          regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          lastName: lastName
           score: 0.80082819046101150206595775671303272247314453125
-          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -4705,6 +5146,7 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
+          category: category
           countryOriginAlt: countryOriginAlt
       properties:
         personalNames:
@@ -4745,6 +5187,131 @@ components:
       type: object
       xml:
         name: FirstLastNameGeoZippedIn
+    CorridorIn:
+      description: Represent any transnational interaction between names (ex. remittance, communication, cross-border investment, airline travel
+      example:
+        firstLastNameGeoTo:
+          firstName: firstName
+          lastName: lastName
+          id: id
+          countryIso2: countryIso2
+        id: id
+        firstLastNameGeoFrom:
+          firstName: firstName
+          lastName: lastName
+          id: id
+          countryIso2: countryIso2
+      properties:
+        id:
+          type: string
+          xml:
+            attribute: true
+        firstLastNameGeoFrom:
+          $ref: '#/components/schemas/FirstLastNameGeoIn'
+        firstLastNameGeoTo:
+          $ref: '#/components/schemas/FirstLastNameGeoIn'
+      type: object
+      xml:
+        name: CorridorIn
+    BatchCorridorOut:
+      example:
+        corridorFromTo:
+        - FirstLastNameDiasporaedOut:
+            firstName: firstName
+            lastName: lastName
+            score: 5.962133916683182377482808078639209270477294921875
+            ethnicity: ethnicity
+            lifted: true
+            ethnicityAlt: ethnicityAlt
+            id: id
+            countryIso2: countryIso2
+            category: category
+            ethnicitiesTop:
+            - ethnicitiesTop
+            - ethnicitiesTop
+            script: script
+          FirstLastNameGenderedOut:
+            firstName: firstName
+            lastName: lastName
+            genderScale: 0.80082819046101150206595775671303272247314453125
+            score: 6.02745618307040320615897144307382404804229736328125
+            probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
+            likelyGender: male
+            id: id
+            category: category
+            script: script
+          id: id
+          category: category
+          script: script
+          FirstLastNameOriginedOut:
+            lastName: lastName
+            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+            script: script
+            regionOrigin: regionOrigin
+            topRegionOrigin: topRegionOrigin
+            firstName: firstName
+            score: 0.80082819046101150206595775671303272247314453125
+            subRegionOrigin: subRegionOrigin
+            probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
+            countriesOriginTop:
+            - countriesOriginTop
+            - countriesOriginTop
+            id: id
+            countryOrigin: countryOrigin
+            category: category
+            countryOriginAlt: countryOriginAlt
+        - FirstLastNameDiasporaedOut:
+            firstName: firstName
+            lastName: lastName
+            score: 5.962133916683182377482808078639209270477294921875
+            ethnicity: ethnicity
+            lifted: true
+            ethnicityAlt: ethnicityAlt
+            id: id
+            countryIso2: countryIso2
+            category: category
+            ethnicitiesTop:
+            - ethnicitiesTop
+            - ethnicitiesTop
+            script: script
+          FirstLastNameGenderedOut:
+            firstName: firstName
+            lastName: lastName
+            genderScale: 0.80082819046101150206595775671303272247314453125
+            score: 6.02745618307040320615897144307382404804229736328125
+            probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
+            likelyGender: male
+            id: id
+            category: category
+            script: script
+          id: id
+          category: category
+          script: script
+          FirstLastNameOriginedOut:
+            lastName: lastName
+            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+            script: script
+            regionOrigin: regionOrigin
+            topRegionOrigin: topRegionOrigin
+            firstName: firstName
+            score: 0.80082819046101150206595775671303272247314453125
+            subRegionOrigin: subRegionOrigin
+            probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
+            countriesOriginTop:
+            - countriesOriginTop
+            - countriesOriginTop
+            id: id
+            countryOrigin: countryOrigin
+            category: category
+            countryOriginAlt: countryOriginAlt
+      properties:
+        corridorFromTo:
+          items:
+            $ref: '#/components/schemas/CorridorOut'
+          type: array
+      type: object
+      xml:
+        name: BatchCorridorOut
     BatchPersonalNameGeoIn:
       example:
         personalNames:
@@ -4796,12 +5363,20 @@ components:
         name: APIClassifierTaxonomyOut
     NameMatchCandidateOut:
       example:
+        predScoreGivenName: 6.02745618307040320615897144307382404804229736328125
         candidateName: candidateName
         probability: 0.80082819046101150206595775671303272247314453125
+        predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
       properties:
         candidateName:
           type: string
         probability:
+          format: double
+          type: number
+        predScoreGivenName:
+          format: double
+          type: number
+        predScoreFamilyName:
           format: double
           type: number
       type: object
@@ -4830,6 +5405,7 @@ components:
           originCountryIso2Alt: originCountryIso2Alt
           phoneCountryIso2Verified: phoneCountryIso2Verified
           verified: true
+          script: script
           firstName: firstName
           score: 1.46581298050294517310021547018550336360931396484375
           phoneNumber: phoneNumber
@@ -4841,10 +5417,12 @@ components:
           internationalPhoneNumberVerified: internationalPhoneNumberVerified
           phoneCountryCodeAlt: 6
           countryIso2: countryIso2
+          category: category
         - lastName: lastName
           originCountryIso2Alt: originCountryIso2Alt
           phoneCountryIso2Verified: phoneCountryIso2Verified
           verified: true
+          script: script
           firstName: firstName
           score: 1.46581298050294517310021547018550336360931396484375
           phoneNumber: phoneNumber
@@ -4856,6 +5434,7 @@ components:
           internationalPhoneNumberVerified: internationalPhoneNumberVerified
           phoneCountryCodeAlt: 6
           countryIso2: countryIso2
+          category: category
       properties:
         personalNamesWithPhoneNumbers:
           items:
@@ -4877,8 +5456,12 @@ components:
         probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
         probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
         id: id
+        category: category
+        script: script
         raceEthnicity: W_NL
       properties:
+        script:
+          type: string
         id:
           type: string
         firstName:
@@ -4921,6 +5504,8 @@ components:
         probabilityAltCalibrated:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: FirstLastNameUSRaceEthnicityOut
@@ -4934,12 +5519,13 @@ components:
           id: id
           countryIso2: countryIso2
           FirstLastNameOriginedOut:
+            lastName: lastName
+            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+            script: script
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            lastName: lastName
             score: 0.80082819046101150206595775671303272247314453125
-            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -4947,6 +5533,7 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
+            category: category
             countryOriginAlt: countryOriginAlt
         - firstName: firstName
           lastName: lastName
@@ -4955,12 +5542,13 @@ components:
           id: id
           countryIso2: countryIso2
           FirstLastNameOriginedOut:
+            lastName: lastName
+            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+            script: script
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            lastName: lastName
             score: 0.80082819046101150206595775671303272247314453125
-            probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -4968,6 +5556,7 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
+            category: category
             countryOriginAlt: countryOriginAlt
       properties:
         personalNamesWithPhoneNumbers:
@@ -5033,6 +5622,32 @@ components:
       type: object
       xml:
         name: APIServiceOut
+    BatchProperNounCategorizedOut:
+      description: Represents the output of inferring the common type (anthroponym, toponym, brand, etc.) from a list of proper names.
+      example:
+        properNouns:
+        - score: 0.80082819046101150206595775671303272247314453125
+          commonTypeAlt: commonTypeAlt
+          name: name
+          id: id
+          category: category
+          script: script
+          commonType: commonType
+        - score: 0.80082819046101150206595775671303272247314453125
+          commonTypeAlt: commonTypeAlt
+          name: name
+          id: id
+          category: category
+          script: script
+          commonType: commonType
+      properties:
+        properNouns:
+          items:
+            $ref: '#/components/schemas/ProperNounCategorizedOut'
+          type: array
+      type: object
+      xml:
+        name: BatchProperNounCategorizedOut
     BatchFirstLastNameIn:
       example:
         personalNames:
@@ -5095,8 +5710,12 @@ components:
         id: id
         targetScript: targetScript
         latinName: latinName
+        category: category
+        script: script
         sourceLanguage: sourceLanguage
       properties:
+        script:
+          type: string
         id:
           type: string
         latinName:
@@ -5114,11 +5733,15 @@ components:
         score:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: RomanizedNameOut
     NameMatchedOut:
       properties:
+        script:
+          type: string
         id:
           type: string
         matchStatus:
@@ -5126,6 +5749,8 @@ components:
         score:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: NameMatchedOut
@@ -5147,12 +5772,13 @@ components:
         id: id
         countryIso2: countryIso2
         FirstLastNameOriginedOut:
+          lastName: lastName
+          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+          script: script
           regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          lastName: lastName
           score: 0.80082819046101150206595775671303272247314453125
-          probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -5160,6 +5786,7 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
+          category: category
           countryOriginAlt: countryOriginAlt
       properties:
         id:
@@ -5317,20 +5944,24 @@ components:
         name: ClassifierMetricsOut
     PersonalNameGeoOut:
       example:
-        score: 0.80082819046101150206595775671303272247314453125
         country: country
         topRegion: topRegion
         subRegion: subRegion
         probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
+        countryAlt: countryAlt
+        script: script
+        score: 0.80082819046101150206595775671303272247314453125
         countriesTop:
         - countriesTop
         - countriesTop
         name: name
-        countryAlt: countryAlt
         probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
         id: id
         region: region
+        category: category
       properties:
+        script:
+          type: string
         id:
           type: string
         name:
@@ -5360,6 +5991,8 @@ components:
         probabilityAltCalibrated:
           format: double
           type: number
+        category:
+          type: string
       type: object
       xml:
         name: PersonalNameGeoOut

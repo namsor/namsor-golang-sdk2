@@ -3,6 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Script** | **string** |  | [optional] 
 **Id** | **string** |  | [optional] 
 **FirstName** | **string** |  | [optional] 
 **LastName** | **string** |  | [optional] 
@@ -15,6 +16,7 @@ Name | Type | Description | Notes
 **SubRegionOrigin** | **string** | Most likely region of Origin (based on countryOrigin ISO2 code) | [optional] 
 **ProbabilityCalibrated** | **float64** |  | [optional] 
 **ProbabilityAltCalibrated** | **float64** |  | [optional] 
+**Category** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

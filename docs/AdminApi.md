@@ -25,8 +25,6 @@ Method | HTTP request | Description
 [**NamsorCounter**](AdminApi.md#NamsorCounter) | **Get** /api2/json/namsorCounter | Get the overall API counter
 [**PaymentInfo**](AdminApi.md#PaymentInfo) | **Get** /api2/json/paymentInfo/{token} | Get the Stripe payment information associated with the current google auth session token.
 [**ProcureKey**](AdminApi.md#ProcureKey) | **Get** /api2/json/procureKey/{token} | Procure an API Key (sent via Email), based on an auth token. Keep your API Key secret.
-[**RedeployUI**](AdminApi.md#RedeployUI) | **Get** /api2/json/redeployUI/{live} | Redeploy UI from current dev branch.
-[**RedeployUI1**](AdminApi.md#RedeployUI1) | **Get** /api2/json/redeployUI | Redeploy UI from current dev branch.
 [**RemoveUserAccount**](AdminApi.md#RemoveUserAccount) | **Get** /api2/json/removeUserAccount/{token} | Remove the user account.
 [**RemoveUserAccountOnBehalf**](AdminApi.md#RemoveUserAccountOnBehalf) | **Get** /api2/json/removeUserAccountOnBehalf/{apiKey} | Remove (on behalf) a user account.
 [**Shutdown**](AdminApi.md#Shutdown) | **Get** /api2/json/shutdown | Stop learning and shutdown system.
@@ -562,54 +560,6 @@ Name | Type | Description  | Notes
 
  - **Content-Type**: Not defined
  - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **RedeployUI**
-> RedeployUI(ctx, live)
-Redeploy UI from current dev branch.
-
-### Required Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **live** | **bool**|  | 
-
-### Return type
-
- (empty response body)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: Not defined
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **RedeployUI1**
-> RedeployUI1(ctx, )
-Redeploy UI from current dev branch.
-
-### Required Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
- (empty response body)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: Not defined
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

@@ -3,6 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Script** | **string** |  | [optional] 
 **Id** | **string** |  | [optional] 
 **Name** | **string** |  | [optional] 
 **Score** | **float64** |  | [optional] 
@@ -14,6 +15,7 @@ Name | Type | Description | Notes
 **CountriesTop** | **[]string** | List countries (top 10) | [optional] 
 **ProbabilityCalibrated** | **float64** |  | [optional] 
 **ProbabilityAltCalibrated** | **float64** |  | [optional] 
+**Category** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

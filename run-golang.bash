@@ -2,7 +2,7 @@ echo update openapi-generator
 ./bin/utils/openapi-generator-cli.sh
 rm -Rf ./namsor/client/go/
 echo run openapi-generator
-java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate --git-repo-id namsor-golang-sdk2 --git-user-id namsor --additional-properties=packageVersion=2.0.11 --additional-properties=packageName=namsorapi -i https://v2.namsor.com/NamSorAPIv2/api2/openapi.json -g go -o  namsor/client/go
+java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate --git-repo-id namsor-golang-sdk2 --git-user-id namsor --additional-properties=packageVersion=2.0.12 --additional-properties=packageName=namsorapi -i https://v2.namsor.com/NamSorAPIv2/api2/openapi.json -g go -o  namsor/client/go
 cd ./namsor/client/go/
 cp -R /home/namsor/codegen/openapi-generator/namsor/client/go/* /home/namsor/codegen/namsor-golang-sdk2/
 cp /home/namsor/codegen/openapi-generator/run-golang.bash /home/namsor/codegen/namsor-golang-sdk2/

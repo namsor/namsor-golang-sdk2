@@ -4,6 +4,8 @@ All URIs are relative to *https://v2.namsor.com/NamSorAPIv2*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**Corridor**](PersonalApi.md#Corridor) | **Get** /api2/json/corridor/{countryIso2From}/{firstNameFrom}/{lastNameFrom}/{countryIso2To}/{firstNameTo}/{lastNameTo} | [USES 20 UNITS PER NAME COUPLE] Infer several classifications for a cross border interaction between names (ex. remit, travel, intl com)
+[**CorridorBatch**](PersonalApi.md#CorridorBatch) | **Post** /api2/json/corridorBatch | [USES 20 UNITS PER NAME PAIR] Infer several classifications for up to 100 cross border interaction between names (ex. remit, travel, intl com)
 [**Country**](PersonalApi.md#Country) | **Get** /api2/json/country/{personalNameFull} | [USES 10 UNITS PER NAME] Infer the likely country of residence of a personal full name, or one surname. Assumes names as they are in the country of residence OR the country of origin.
 [**CountryBatch**](PersonalApi.md#CountryBatch) | **Post** /api2/json/countryBatch | [USES 10 UNITS PER NAME] Infer the likely country of residence of up to 100 personal full names, or surnames. Assumes names as they are in the country of residence OR the country of origin.
 [**Diaspora**](PersonalApi.md#Diaspora) | **Get** /api2/json/diaspora/{countryIso2}/{firstName}/{lastName} | [USES 20 UNITS PER NAME] Infer the likely ethnicity/diaspora of a personal name, given a country of residence ISO2 code (ex. US, CA, AU, NZ etc.)
@@ -29,6 +31,70 @@ Method | HTTP request | Description
 [**UsRaceEthnicityZIP5**](PersonalApi.md#UsRaceEthnicityZIP5) | **Get** /api2/json/usRaceEthnicityZIP5/{firstName}/{lastName}/{zip5Code} | [USES 10 UNITS PER NAME] Infer a US resident&#39;s likely race/ethnicity according to US Census taxonomy, using (optional) ZIP5 code info. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino).
 [**UsZipRaceEthnicityBatch**](PersonalApi.md#UsZipRaceEthnicityBatch) | **Post** /api2/json/usZipRaceEthnicityBatch | [USES 10 UNITS PER NAME] Infer up-to 100 US resident&#39;s likely race/ethnicity according to US Census taxonomy, with (optional) ZIP code.
 
+
+# **Corridor**
+> CorridorOut Corridor(ctx, countryIso2From, firstNameFrom, lastNameFrom, countryIso2To, firstNameTo, lastNameTo)
+[USES 20 UNITS PER NAME COUPLE] Infer several classifications for a cross border interaction between names (ex. remit, travel, intl com)
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **countryIso2From** | **string**|  | 
+  **firstNameFrom** | **string**|  | 
+  **lastNameFrom** | **string**|  | 
+  **countryIso2To** | **string**|  | 
+  **firstNameTo** | **string**|  | 
+  **lastNameTo** | **string**|  | 
+
+### Return type
+
+[**CorridorOut**](CorridorOut.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **CorridorBatch**
+> BatchCorridorOut CorridorBatch(ctx, optional)
+[USES 20 UNITS PER NAME PAIR] Infer several classifications for up to 100 cross border interaction between names (ex. remit, travel, intl com)
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+ **optional** | ***CorridorBatchOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a CorridorBatchOpts struct
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **batchCorridorIn** | [**optional.Interface of BatchCorridorIn**](BatchCorridorIn.md)| A list of name pairs, with country code (nameFrom -&gt; nameTo). | 
+
+### Return type
+
+[**BatchCorridorOut**](BatchCorridorOut.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **Country**
 > PersonalNameGeoOut Country(ctx, personalNameFull)
