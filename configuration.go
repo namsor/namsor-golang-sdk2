@@ -63,7 +63,7 @@ func NewConfiguration() *Configuration {
 	cfg := &Configuration{
 		BasePath:      "https://v2.namsor.com/NamSorAPIv2",
 		DefaultHeader: make(map[string]string),
-		UserAgent:     "OpenAPI-Generator/2.0.12/go",
+		UserAgent:     "OpenAPI-Generator/2.0.13/go",
 	}
 	return cfg
 }
