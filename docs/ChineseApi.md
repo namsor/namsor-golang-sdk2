@@ -21,7 +21,7 @@ Method | HTTP request | Description
 
 
 # **ChineseNameCandidates**
-> RomanizedNameOut ChineseNameCandidates(ctx, chineseSurnameLatin, chineseGivenNameLatin)
+> NameMatchCandidatesOut ChineseNameCandidates(ctx, chineseSurnameLatin, chineseGivenNameLatin)
 Identify Chinese name candidates, based on the romanized name ex. Wang Xiaoming
 
 ### Required Parameters
@@ -34,7 +34,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**RomanizedNameOut**](RomanizedNameOut.md)
+[**NameMatchCandidatesOut**](NameMatchCandidatesOut.md)
 
 ### Authorization
 
@@ -96,7 +96,7 @@ Optional parameters are passed through a pointer to a ChineseNameCandidatesGende
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **batchFirstLastNameIn** | [**optional.Interface of BatchFirstLastNameIn**](BatchFirstLastNameIn.md)| A list of personal Chinese names in LATIN, firstName &#x3D; chineseGivenName; lastName&#x3D;chineseSurname | 
+ **batchFirstLastNameGenderIn** | [**optional.Interface of BatchFirstLastNameGenderIn**](BatchFirstLastNameGenderIn.md)| A list of personal Chinese names in LATIN, firstName &#x3D; chineseGivenName; lastName&#x3D;chineseSurname | 
 
 ### Return type
 
@@ -114,7 +114,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **ChineseNameGenderCandidates**
-> RomanizedNameOut ChineseNameGenderCandidates(ctx, chineseSurnameLatin, chineseGivenNameLatin, knownGender)
+> NameMatchCandidatesOut ChineseNameGenderCandidates(ctx, chineseSurnameLatin, chineseGivenNameLatin, knownGender)
 Identify Chinese name candidates, based on the romanized name ex. Wang Xiaoming - having a known gender ('male' or 'female')
 
 ### Required Parameters
@@ -128,7 +128,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**RomanizedNameOut**](RomanizedNameOut.md)
+[**NameMatchCandidatesOut**](NameMatchCandidatesOut.md)
 
 ### Authorization
 
@@ -142,7 +142,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **ChineseNameMatch**
-> RomanizedNameOut ChineseNameMatch(ctx, chineseSurnameLatin, chineseGivenNameLatin, chineseName)
+> NameMatchedOut ChineseNameMatch(ctx, chineseSurnameLatin, chineseGivenNameLatin, chineseName)
 Return a score for matching Chinese name ex. 王晓明 with a romanized name ex. Wang Xiaoming
 
 ### Required Parameters
@@ -156,7 +156,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**RomanizedNameOut**](RomanizedNameOut.md)
+[**NameMatchedOut**](NameMatchedOut.md)
 
 ### Authorization
 
@@ -170,7 +170,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **ChineseNameMatchBatch**
-> BatchNameMatchCandidatesOut ChineseNameMatchBatch(ctx, optional)
+> BatchNameMatchedOut ChineseNameMatchBatch(ctx, optional)
 Identify Chinese name candidates, based on the romanized name (firstName = chineseGivenName; lastName=chineseSurname), ex. Wang Xiaoming
 
 ### Required Parameters
@@ -185,11 +185,11 @@ Optional parameters are passed through a pointer to a ChineseNameMatchBatchOpts 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **batchFirstLastNameIn** | [**optional.Interface of BatchFirstLastNameIn**](BatchFirstLastNameIn.md)| A list of personal Chinese names in LATIN, firstName &#x3D; chineseGivenName; lastName&#x3D;chineseSurname | 
+ **batchMatchPersonalFirstLastNameIn** | [**optional.Interface of BatchMatchPersonalFirstLastNameIn**](BatchMatchPersonalFirstLastNameIn.md)| A list of personal Chinese names in LATIN, firstName &#x3D; chineseGivenName; lastName&#x3D;chineseSurname | 
 
 ### Return type
 
-[**BatchNameMatchCandidatesOut**](BatchNameMatchCandidatesOut.md)
+[**BatchNameMatchedOut**](BatchNameMatchedOut.md)
 
 ### Authorization
 

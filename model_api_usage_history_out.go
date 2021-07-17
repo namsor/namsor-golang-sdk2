@@ -10,11 +10,7 @@
 
 package namsorapi
 
-// Classified matched names
-type NameMatchedOut struct {
-	Script string `json:"script,omitempty"`
-	Id string `json:"id,omitempty"`
-	// The name matching status.
-	MatchStatus string `json:"matchStatus,omitempty"`
-	Score float64 `json:"score,omitempty"`
+type ApiUsageHistoryOut struct {
+	// Detailed usage as reported by the deduplicating API counter.
+	DetailedUsage []ApiCounterV2Out `json:"detailedUsage,omitempty"`
 }

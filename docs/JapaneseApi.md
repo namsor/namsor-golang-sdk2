@@ -156,7 +156,7 @@ Optional parameters are passed through a pointer to a JapaneseNameGenderKanjiCan
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **batchFirstLastNameIn** | [**optional.Interface of BatchFirstLastNameIn**](BatchFirstLastNameIn.md)| A list of personal japanese names in LATIN, firstName &#x3D; japaneseGivenName; lastName&#x3D;japaneseSurname and known gender | 
+ **batchFirstLastNameGenderIn** | [**optional.Interface of BatchFirstLastNameGenderIn**](BatchFirstLastNameGenderIn.md)| A list of personal japanese names in LATIN, firstName &#x3D; japaneseGivenName; lastName&#x3D;japaneseSurname and known gender | 
 
 ### Return type
 
@@ -174,7 +174,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **JapaneseNameKanjiCandidates**
-> RomanizedNameOut JapaneseNameKanjiCandidates(ctx, japaneseSurnameLatin, japaneseGivenNameLatin, knownGender)
+> NameMatchCandidatesOut JapaneseNameKanjiCandidates(ctx, japaneseSurnameLatin, japaneseGivenNameLatin, knownGender)
 Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae - and a known gender.
 
 ### Required Parameters
@@ -188,7 +188,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**RomanizedNameOut**](RomanizedNameOut.md)
+[**NameMatchCandidatesOut**](NameMatchCandidatesOut.md)
 
 ### Authorization
 
@@ -202,7 +202,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **JapaneseNameKanjiCandidates1**
-> RomanizedNameOut JapaneseNameKanjiCandidates1(ctx, japaneseSurnameLatin, japaneseGivenNameLatin)
+> NameMatchCandidatesOut JapaneseNameKanjiCandidates1(ctx, japaneseSurnameLatin, japaneseGivenNameLatin)
 Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae
 
 ### Required Parameters
@@ -215,7 +215,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**RomanizedNameOut**](RomanizedNameOut.md)
+[**NameMatchCandidatesOut**](NameMatchCandidatesOut.md)
 
 ### Authorization
 
@@ -262,7 +262,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **JapaneseNameLatinCandidates**
-> RomanizedNameOut JapaneseNameLatinCandidates(ctx, japaneseSurnameKanji, japaneseGivenNameKanji)
+> NameMatchCandidatesOut JapaneseNameLatinCandidates(ctx, japaneseSurnameKanji, japaneseGivenNameKanji)
 Romanize japanese name, based on the name in Kanji.
 
 ### Required Parameters
@@ -275,7 +275,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**RomanizedNameOut**](RomanizedNameOut.md)
+[**NameMatchCandidatesOut**](NameMatchCandidatesOut.md)
 
 ### Authorization
 
@@ -322,7 +322,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **JapaneseNameMatch**
-> RomanizedNameOut JapaneseNameMatch(ctx, japaneseSurnameLatin, japaneseGivenNameLatin, japaneseName)
+> NameMatchedOut JapaneseNameMatch(ctx, japaneseSurnameLatin, japaneseGivenNameLatin, japaneseName)
 Return a score for matching Japanese name in KANJI ex. 山本 早苗 with a romanized name ex. Yamamoto Sanae
 
 ### Required Parameters
@@ -336,7 +336,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**RomanizedNameOut**](RomanizedNameOut.md)
+[**NameMatchedOut**](NameMatchedOut.md)
 
 ### Authorization
 
@@ -350,7 +350,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **JapaneseNameMatchBatch**
-> BatchNameMatchCandidatesOut JapaneseNameMatchBatch(ctx, optional)
+> BatchNameMatchedOut JapaneseNameMatchBatch(ctx, optional)
 Return a score for matching a list of Japanese names in KANJI ex. 山本 早苗 with romanized names ex. Yamamoto Sanae
 
 ### Required Parameters
@@ -365,11 +365,11 @@ Optional parameters are passed through a pointer to a JapaneseNameMatchBatchOpts
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **batchFirstLastNameIn** | [**optional.Interface of BatchFirstLastNameIn**](BatchFirstLastNameIn.md)| A list of personal Japanese names in LATIN, firstName &#x3D; japaneseGivenName; lastName&#x3D;japaneseSurname | 
+ **batchMatchPersonalFirstLastNameIn** | [**optional.Interface of BatchMatchPersonalFirstLastNameIn**](BatchMatchPersonalFirstLastNameIn.md)| A list of personal Japanese names in LATIN, firstName &#x3D; japaneseGivenName; lastName&#x3D;japaneseSurname | 
 
 ### Return type
 
-[**BatchNameMatchCandidatesOut**](BatchNameMatchCandidatesOut.md)
+[**BatchNameMatchedOut**](BatchNameMatchedOut.md)
 
 ### Authorization
 
@@ -383,7 +383,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **JapaneseNameMatchFeedbackLoop**
-> RomanizedNameOut JapaneseNameMatchFeedbackLoop(ctx, japaneseSurnameLatin, japaneseGivenNameLatin, japaneseName)
+> FeedbackLoopOut JapaneseNameMatchFeedbackLoop(ctx, japaneseSurnameLatin, japaneseGivenNameLatin, japaneseName)
 [CREDITS 1 UNIT] Feedback loop to better perform matching Japanese name in KANJI ex. 山本 早苗 with a romanized name ex. Yamamoto Sanae
 
 ### Required Parameters
@@ -397,7 +397,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**RomanizedNameOut**](RomanizedNameOut.md)
+[**FeedbackLoopOut**](FeedbackLoopOut.md)
 
 ### Authorization
 

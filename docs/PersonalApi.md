@@ -24,12 +24,10 @@ Method | HTTP request | Description
 [**ParseNameBatch**](PersonalApi.md#ParseNameBatch) | **Post** /api2/json/parseNameBatch | Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John.
 [**ParseNameGeo**](PersonalApi.md#ParseNameGeo) | **Get** /api2/json/parseName/{nameFull}/{countryIso2} | Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John. For better accuracy, provide a geographic context.
 [**ParseNameGeoBatch**](PersonalApi.md#ParseNameGeoBatch) | **Post** /api2/json/parseNameGeoBatch | Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John. Giving a local context improves precision. 
-[**ParsedGenderBatch**](PersonalApi.md#ParsedGenderBatch) | **Post** /api2/json/parsedGenderBatch | Infer the likely gender of up to 100 fully parsed names, detecting automatically the cultural context.
-[**ParsedGenderGeoBatch**](PersonalApi.md#ParsedGenderGeoBatch) | **Post** /api2/json/parsedGenderGeoBatch | Infer the likely gender of up to 100 fully parsed names, detecting automatically the cultural context.
-[**UsRaceEthnicity**](PersonalApi.md#UsRaceEthnicity) | **Get** /api2/json/usRaceEthnicity/{firstName}/{lastName} | [USES 10 UNITS PER NAME] Infer a US resident&#39;s likely race/ethnicity according to US Census taxonomy W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino).
-[**UsRaceEthnicityBatch**](PersonalApi.md#UsRaceEthnicityBatch) | **Post** /api2/json/usRaceEthnicityBatch | [USES 10 UNITS PER NAME] Infer up-to 100 US resident&#39;s likely race/ethnicity according to US Census taxonomy.
-[**UsRaceEthnicityZIP5**](PersonalApi.md#UsRaceEthnicityZIP5) | **Get** /api2/json/usRaceEthnicityZIP5/{firstName}/{lastName}/{zip5Code} | [USES 10 UNITS PER NAME] Infer a US resident&#39;s likely race/ethnicity according to US Census taxonomy, using (optional) ZIP5 code info. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino).
-[**UsZipRaceEthnicityBatch**](PersonalApi.md#UsZipRaceEthnicityBatch) | **Post** /api2/json/usZipRaceEthnicityBatch | [USES 10 UNITS PER NAME] Infer up-to 100 US resident&#39;s likely race/ethnicity according to US Census taxonomy, with (optional) ZIP code.
+[**UsRaceEthnicity**](PersonalApi.md#UsRaceEthnicity) | **Get** /api2/json/usRaceEthnicity/{firstName}/{lastName} | [USES 10 UNITS PER NAME] Infer a US resident&#39;s likely race/ethnicity according to US Census taxonomy W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific Islander).
+[**UsRaceEthnicityBatch**](PersonalApi.md#UsRaceEthnicityBatch) | **Post** /api2/json/usRaceEthnicityBatch | [USES 10 UNITS PER NAME] Infer up-to 100 US resident&#39;s likely race/ethnicity according to US Census taxonomy. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific Islander).
+[**UsRaceEthnicityZIP5**](PersonalApi.md#UsRaceEthnicityZIP5) | **Get** /api2/json/usRaceEthnicityZIP5/{firstName}/{lastName}/{zip5Code} | [USES 10 UNITS PER NAME] Infer a US resident&#39;s likely race/ethnicity according to US Census taxonomy, using (optional) ZIP5 code info. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific Islander).
+[**UsZipRaceEthnicityBatch**](PersonalApi.md#UsZipRaceEthnicityBatch) | **Post** /api2/json/usZipRaceEthnicityBatch | [USES 10 UNITS PER NAME] Infer up-to 100 US resident&#39;s likely race/ethnicity according to US Census taxonomy, with (optional) ZIP code. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific Islander).
 
 
 # **Corridor**
@@ -635,75 +633,9 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **ParsedGenderBatch**
-> BatchFirstLastNameGenderedOut ParsedGenderBatch(ctx, optional)
-Infer the likely gender of up to 100 fully parsed names, detecting automatically the cultural context.
-
-### Required Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
- **optional** | ***ParsedGenderBatchOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-Optional parameters are passed through a pointer to a ParsedGenderBatchOpts struct
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **batchParsedFullNameIn** | [**optional.Interface of BatchParsedFullNameIn**](BatchParsedFullNameIn.md)| A list of personal names | 
-
-### Return type
-
-[**BatchFirstLastNameGenderedOut**](BatchFirstLastNameGenderedOut.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **ParsedGenderGeoBatch**
-> BatchFirstLastNameGenderedOut ParsedGenderGeoBatch(ctx, optional)
-Infer the likely gender of up to 100 fully parsed names, detecting automatically the cultural context.
-
-### Required Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
- **optional** | ***ParsedGenderGeoBatchOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-Optional parameters are passed through a pointer to a ParsedGenderGeoBatchOpts struct
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **batchParsedFullNameGeoIn** | [**optional.Interface of BatchParsedFullNameGeoIn**](BatchParsedFullNameGeoIn.md)| A list of personal names | 
-
-### Return type
-
-[**BatchFirstLastNameGenderedOut**](BatchFirstLastNameGenderedOut.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 # **UsRaceEthnicity**
 > FirstLastNameUsRaceEthnicityOut UsRaceEthnicity(ctx, firstName, lastName)
-[USES 10 UNITS PER NAME] Infer a US resident's likely race/ethnicity according to US Census taxonomy W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino).
+[USES 10 UNITS PER NAME] Infer a US resident's likely race/ethnicity according to US Census taxonomy W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific Islander).
 
 ### Required Parameters
 
@@ -730,7 +662,7 @@ Name | Type | Description  | Notes
 
 # **UsRaceEthnicityBatch**
 > BatchFirstLastNameUsRaceEthnicityOut UsRaceEthnicityBatch(ctx, optional)
-[USES 10 UNITS PER NAME] Infer up-to 100 US resident's likely race/ethnicity according to US Census taxonomy.
+[USES 10 UNITS PER NAME] Infer up-to 100 US resident's likely race/ethnicity according to US Census taxonomy. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific Islander).
 
 ### Required Parameters
 
@@ -763,7 +695,7 @@ Name | Type | Description  | Notes
 
 # **UsRaceEthnicityZIP5**
 > FirstLastNameUsRaceEthnicityOut UsRaceEthnicityZIP5(ctx, firstName, lastName, zip5Code)
-[USES 10 UNITS PER NAME] Infer a US resident's likely race/ethnicity according to US Census taxonomy, using (optional) ZIP5 code info. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino).
+[USES 10 UNITS PER NAME] Infer a US resident's likely race/ethnicity according to US Census taxonomy, using (optional) ZIP5 code info. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific Islander).
 
 ### Required Parameters
 
@@ -791,7 +723,7 @@ Name | Type | Description  | Notes
 
 # **UsZipRaceEthnicityBatch**
 > BatchFirstLastNameUsRaceEthnicityOut UsZipRaceEthnicityBatch(ctx, optional)
-[USES 10 UNITS PER NAME] Infer up-to 100 US resident's likely race/ethnicity according to US Census taxonomy, with (optional) ZIP code.
+[USES 10 UNITS PER NAME] Infer up-to 100 US resident's likely race/ethnicity according to US Census taxonomy, with (optional) ZIP code. Output is W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific Islander).
 
 ### Required Parameters
 

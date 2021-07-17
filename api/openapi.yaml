@@ -5,15 +5,17 @@ info:
     name: Namsor SAS
     url: http://www.namsor.com/
   description: 'NamSor API v2 : enpoints to process personal names (gender, cultural
-    origin or ethnicity) in all alphabets or languages. Use GET methods for small
-    tests, but prefer POST methods for higher throughput (batch processing of up to
-    100 names at a time). Need something you can''t find here? We have many more features
-    coming soon. Let us know, we''ll do our best to add it! '
+    origin or ethnicity) in all alphabets or languages. By default, enpoints use 1
+    unit per name (ex. Gender), but Ethnicity classification uses 10 to 20 units per
+    name depending on taxonomy. Use GET methods for small tests, but prefer POST methods
+    for higher throughput (batch processing of up to 100 names at a time). Need something
+    you can''t find here? We have many more features coming soon. Let us know, we''ll
+    do our best to add it! '
   license:
     name: NamSorAPI_Lic_v0.0.7
     url: https://v2.namsor.com/NamSorAPIv2/assets/pdf/201803_NamSor_API_Terms_v007.pdf
   title: NamSor API v2
-  version: 2.0.13
+  version: 2.0.15
 externalDocs:
   description: NamSor API client SDKs v2 for Java, Python
   url: https://github.com/namsor
@@ -64,6 +66,60 @@ paths:
         of residence OR the country of origin.'
       tags:
       - personal
+  /api2/json/nameType/{properNoun}:
+    get:
+      operationId: nameType
+      parameters:
+      - explode: false
+        in: path
+        name: properNoun
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProperNounCategorizedOut'
+          description: A typed name.
+        401:
+          description: Missing or incorrect API Key
+        403:
+          description: API Limit Reached or API Key Disabled
+      security:
+      - api_key: []
+      summary: Infer the likely type of a proper noun (personal name, brand name, place name etc.)
+      tags:
+      - general
+  /api2/json/disable/{source}/{disabled}:
+    get:
+      operationId: disable
+      parameters:
+      - description: The API Key to set as enabled/disabled.
+        explode: false
+        in: path
+        name: source
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: disabled
+        required: true
+        schema:
+          type: boolean
+        style: simple
+      responses:
+        200:
+          description: Disabled the API Key.
+        401:
+          description: Missing or incorrect API Key
+      summary: Activate/deactivate an API Key.
+      tags:
+      - admin
   /api2/json/origin/{firstName}/{lastName}:
     get:
       operationId: origin
@@ -100,150 +156,6 @@ paths:
         NZ and other melting-pots : use ''diaspora'' instead.'
       tags:
       - personal
-  /api2/json/nameType/{properNoun}:
-    get:
-      operationId: nameType
-      parameters:
-      - explode: false
-        in: path
-        name: properNoun
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProperNounCategorizedOut'
-          description: A typed name.
-        401:
-          description: Missing or incorrect API Key
-        403:
-          description: API Limit Reached or API Key Disabled
-      security:
-      - api_key: []
-      summary: Infer the likely type of a proper noun (personal name, brand name, place name etc.)
-      tags:
-      - general
-  /api2/json/stripeConnect:
-    get:
-      operationId: stripeConnect
-      parameters:
-      - explode: true
-        in: query
-        name: scope
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: true
-        in: query
-        name: code
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: true
-        in: query
-        name: error
-        required: false
-        schema:
-          type: string
-        style: form
-      - explode: true
-        in: query
-        name: error_description
-        required: false
-        schema:
-          type: string
-        style: form
-      responses:
-        401:
-          description: Missing or incorrect email or payment token
-      summary: Connects a Stripe Account.
-      tags:
-      - admin
-  /api2/json/charge:
-    post:
-      operationId: charge
-      requestBody:
-        $ref: '#/components/requestBodies/inline_object'
-        content:
-          '*/*':
-            schema:
-              properties:
-                stripeToken:
-                  type: string
-                stripeEmail:
-                  type: string
-              type: object
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyOut'
-          description: A stripe customerID
-        401:
-          description: Missing or incorrect email or payment token
-      summary: Create a Stripe Customer, based on a payment card token (from secure StripeJS) and email.
-      tags:
-      - admin
-  /api2/json/paymentInfo/{token}:
-    get:
-      operationId: paymentInfo
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyOut'
-          description: An session token
-        401:
-          description: Missing or incorrect token
-      summary: Get the Stripe payment information associated with the current google auth session token.
-      tags:
-      - admin
-  /api2/json/updatePaymentDefault/{defautSourceId}/{token}:
-    get:
-      operationId: updatePaymentDefault
-      parameters:
-      - explode: false
-        in: path
-        name: defautSourceId
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyOut'
-          description: An session token
-        401:
-          description: Missing or incorrect token
-      summary: Update the default Stripe card associated with the current google auth session token.
-      tags:
-      - admin
   /api2/json/softwareVersion:
     get:
       operationId: softwareVersion
@@ -259,171 +171,6 @@ paths:
       summary: Get the current software version
       tags:
       - admin
-  /api2/json/namsorCounter:
-    get:
-      operationId: namsorCounter
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SoftwareVersionOut'
-          description: The overall API counter
-        401:
-          description: Missing or incorrect token
-      summary: Get the overall API counter
-      tags:
-      - admin
-  /api2/json/billingCurrencies:
-    get:
-      operationId: billingCurrencies
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CurrenciesOut'
-          description: The supported billing currencies.
-        401:
-          description: Missing or incorrect token
-      summary: List possible currency options for billing (USD, EUR, GBP, ...)
-      tags:
-      - admin
-  /api2/json/billingInfo/{token}:
-    get:
-      operationId: billingInfo
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BillingInfoInOut'
-          description: The current billing info
-        401:
-          description: Missing or incorrect token
-      summary: Read the billing information (company name, address, phone, vat ID)
-      tags:
-      - admin
-  /api2/json/updateBillingInfo/{token}:
-    post:
-      operationId: updateBillingInfo
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json;charset=UTF-8:
-            schema:
-              $ref: '#/components/schemas/BillingInfoInOut'
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BillingInfoInOut'
-          description: The updated billing info
-        401:
-          description: Missing or incorrect token
-      summary: Sets or update the billing information (company name, address, phone, vat ID)
-      tags:
-      - admin
-  /api2/json/billingHistory/{token}:
-    get:
-      operationId: billingHistory
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BillingHistoryOut'
-          description: The billing history
-        401:
-          description: Missing or incorrect token
-      summary: Read the history billing information (invoices paid via Stripe or manually).
-      tags:
-      - admin
-  /api2/json/procureKey/{token}:
-    get:
-      operationId: procureKey
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyOut'
-          description: An API Key
-        401:
-          description: Missing or incorrect token
-      summary: Procure an API Key (sent via Email), based on an auth token. Keep your API Key secret.
-      tags:
-      - admin
-  /api2/json/availablePlans/{token}:
-    get:
-      operationId: availablePlans
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIPlansOut'
-          description: Available plans
-        401:
-          description: Missing or incorrect token
-      summary: List all available plans in the user's preferred currency.
-      tags:
-      - admin
-  /api2/json/availablePlans:
-    get:
-      operationId: availablePlans_1
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIPlansOut'
-          description: Available plans
-        401:
-          description: Missing or incorrect token
-      summary: List all available plans in the default currency (usd).
-      tags:
-      - admin
   /api2/json/apiStatus:
     get:
       operationId: apiStatus
@@ -432,11 +179,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/APIPlansOut'
+                $ref: '#/components/schemas/APIClassifiersStatusOut'
           description: Available classifiers and status
         401:
           description: Missing or incorrect token
-      summary: Prints the current status of the classifiers.
+      summary: Prints the current status of the classifiers. A classifier name in apiStatus corresponds to a service name in apiServices.
       tags:
       - admin
   /api2/json/apiServices:
@@ -447,11 +194,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/APIPlansOut'
+                $ref: '#/components/schemas/APIServicesOut'
           description: Available services
         401:
           description: Missing or incorrect token
-      summary: List of API services and usage cost in Units (default is 1=ONE Unit).
+      summary: List of classification services and usage cost in Units per classification (default is 1=ONE Unit). Some API endpoints (ex. Corridor) combine multiple classifiers.
       tags:
       - admin
   /api2/json/taxonomyClasses/{classifierName}:
@@ -470,218 +217,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/APIPlansOut'
+                $ref: '#/components/schemas/APIClassifierTaxonomyOut'
           description: Available plans
         401:
           description: Missing or incorrect token
       summary: Print the taxonomy classes valid for the given classifier.
-      tags:
-      - admin
-  /api2/json/subscribePlan/{planName}/{token}:
-    get:
-      operationId: subscribePlan
-      parameters:
-      - explode: false
-        in: path
-        name: planName
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIPlanSubscriptionOut'
-          description: An API subscription
-        401:
-          description: Missing or incorrect token
-      summary: Subscribe to a give API plan, using the user's preferred or default currency.
-      tags:
-      - admin
-  /api2/json/subscribePlanOnBehalf/{planName}/{apiKey}:
-    get:
-      operationId: subscribePlanOnBehalf
-      parameters:
-      - explode: false
-        in: path
-        name: planName
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: apiKey
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIPlanSubscriptionOut'
-          description: An API subscription
-        401:
-          description: Missing or incorrect token
-      summary: Subscribe to a give API plan, using the user's preferred or default currency (admin only).
-      tags:
-      - admin
-  /api2/json/removeUserAccount/{token}:
-    get:
-      operationId: removeUserAccount
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIPlanSubscriptionOut'
-          description: An API subscription
-        401:
-          description: Missing or incorrect token
-      summary: Remove the user account.
-      tags:
-      - admin
-  /api2/json/removeUserAccountOnBehalf/{apiKey}:
-    get:
-      operationId: removeUserAccountOnBehalf
-      parameters:
-      - explode: false
-        in: path
-        name: apiKey
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIPlanSubscriptionOut'
-          description: An API subscription
-        401:
-          description: Missing or incorrect token
-      summary: Remove (on behalf) a user account.
-      tags:
-      - admin
-  /api2/json/updateLimit/{usageLimit}/{hardOrSoft}/{token}:
-    get:
-      operationId: updateLimit
-      parameters:
-      - explode: false
-        in: path
-        name: usageLimit
-        required: true
-        schema:
-          format: int32
-          type: integer
-        style: simple
-      - explode: false
-        in: path
-        name: hardOrSoft
-        required: true
-        schema:
-          type: boolean
-        style: simple
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIPeriodUsageOut'
-          description: An API subscription
-        401:
-          description: Missing or incorrect token
-      summary: Modifies the hard/soft limit on the API plan's overages (default is 0$ soft limit).
-      tags:
-      - admin
-  /api2/json/verifyEmail/{emailToken}:
-    get:
-      operationId: verifyEmail
-      parameters:
-      - explode: false
-        in: path
-        name: emailToken
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyOut'
-          description: An API Key
-        401:
-          description: Missing or incorrect token
-      summary: Verifies an email, based on token sent to that email
-      tags:
-      - admin
-  /api2/json/verifyRemoveEmail/{emailToken}:
-    get:
-      operationId: verifyRemoveEmail
-      parameters:
-      - explode: false
-        in: path
-        name: emailToken
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyOut'
-          description: An API Key
-        401:
-          description: Missing or incorrect token
-      summary: Verifies an email, based on token sent to that email
-      tags:
-      - admin
-  /api2/json/stats:
-    get:
-      operationId: stats
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SystemMetricsOut'
-          description: Current system status.
-        401:
-          description: Missing or incorrect API Key
-      security:
-      - api_key: []
-      summary: Print basic system statistics.
       tags:
       - admin
   /api2/json/apiUsage:
@@ -709,8 +249,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/APIPeriodUsageOut'
-          description: Print historical API usage.
+                $ref: '#/components/schemas/APIUsageHistoryOut'
+          description: Print historical API usage (NB. new output format form v2.0.15)
         401:
           description: Missing or incorrect API Key
       security:
@@ -726,7 +266,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/APIPeriodUsageOut'
+                $ref: '#/components/schemas/APIUsageAggregatedOut'
           description: Print historical API usage.
         401:
           description: Missing or incorrect API Key
@@ -735,111 +275,12 @@ paths:
       summary: Print historical API usage (in an aggregated view, by service, by day/hour/min).
       tags:
       - admin
-  /api2/json/sourceStats/{source}:
-    get:
-      operationId: sourceStats
-      parameters:
-      - explode: false
-        in: path
-        name: source
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SystemMetricsOut'
-          description: Current system status.
-        401:
-          description: Missing or incorrect API Key
-      security:
-      - api_key: []
-      summary: Print basic source statistics.
-      tags:
-      - admin
-  /api2/json/addCredits/{apiKey}/{usageCredits}/{userMessage}:
-    get:
-      operationId: addCredits
-      parameters:
-      - explode: false
-        in: path
-        name: apiKey
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: usageCredits
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      - explode: false
-        in: path
-        name: userMessage
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SystemMetricsOut'
-          description: Estimate new after applying credits.
-        401:
-          description: Missing or incorrect API Key
-      security:
-      - api_key: []
-      summary: Add usage credits to an API Key.
-      tags:
-      - admin
-  /api2/json/invalidateCache:
-    get:
-      operationId: invalidateCache
-      responses:
-        200:
-          description: Clear caches.
-        401:
-          description: Missing or incorrect API Key
-      summary: Invalidate system caches.
-      tags:
-      - admin
-  /api2/json/debugLevel/{logger}/{level}:
-    get:
-      operationId: debugLevel
-      parameters:
-      - explode: false
-        in: path
-        name: logger
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: level
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        401:
-          description: Missing or incorrect API Key
-      summary: Update debug level for a classifier
-      tags:
-      - admin
   /api2/json/learnable/{source}/{learnable}:
     get:
       operationId: learnable
       parameters:
-      - explode: false
+      - description: The API Key to set as learnable/non learnable.
+        explode: false
         in: path
         name: source
         required: true
@@ -855,7 +296,7 @@ paths:
         style: simple
       responses:
         200:
-          description: Vetting of a source.
+          description: Set learning from source.
         401:
           description: Missing or incorrect API Key
       summary: Activate/deactivate learning from a source.
@@ -885,58 +326,6 @@ paths:
         401:
           description: Missing or incorrect API Key
       summary: Activate/deactivate anonymization for a source.
-      tags:
-      - admin
-  /api2/json/vetting/{source}/{vetted}:
-    get:
-      operationId: vet
-      parameters:
-      - explode: false
-        in: path
-        name: source
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: vetted
-        required: true
-        schema:
-          type: boolean
-        style: simple
-      responses:
-        200:
-          description: Vetting of a source.
-        401:
-          description: Missing or incorrect API Key
-      summary: Vetting of a source.
-      tags:
-      - admin
-  /api2/json/corporateKey/{apiKey}/{corporate}:
-    get:
-      operationId: corporateKey
-      parameters:
-      - explode: false
-        in: path
-        name: apiKey
-        required: true
-        schema:
-          type: string
-        style: simple
-      - explode: false
-        in: path
-        name: corporate
-        required: true
-        schema:
-          type: boolean
-        style: simple
-      responses:
-        200:
-          description: API Key set to a corporate status.
-        401:
-          description: Missing or incorrect API Key
-      summary: Setting an API Key to a corporate status.
       tags:
       - admin
   /api2/json/nameTypeGeo/{properNoun}/{countryIso2}:
@@ -1237,56 +626,6 @@ paths:
       summary: Infer the likely gender of up to 100 names, detecting automatically the cultural context.
       tags:
       - personal
-  /api2/json/parsedGenderBatch:
-    post:
-      operationId: parsedGenderBatch
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BatchParsedFullNameIn'
-        description: A list of personal names
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchFirstLastNameGenderedOut'
-          description: A list of genderized names.
-        401:
-          description: Missing or incorrect API Key
-        403:
-          description: API Limit Reached or API Key Disabled
-      security:
-      - api_key: []
-      summary: Infer the likely gender of up to 100 fully parsed names, detecting automatically the cultural context.
-      tags:
-      - personal
-  /api2/json/parsedGenderGeoBatch:
-    post:
-      operationId: parsedGenderGeoBatch
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BatchParsedFullNameGeoIn'
-        description: A list of personal names
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchFirstLastNameGenderedOut'
-          description: A list of genderized names.
-        401:
-          description: Missing or incorrect API Key
-        403:
-          description: API Limit Reached or API Key Disabled
-      security:
-      - api_key: []
-      summary: Infer the likely gender of up to 100 fully parsed names, detecting automatically the cultural context.
-      tags:
-      - personal
   /api2/json/genderFullGeo/{fullName}/{countryIso2}:
     get:
       operationId: genderFullGeo
@@ -1477,7 +816,8 @@ paths:
                 $ref: '#/components/schemas/FirstLastNameUSRaceEthnicityOut'
           description: 'a US resident''s likely race/ethnicity : W_NL (white, non
             latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non
-            latino).'
+            latino), AI_AN (American Indian or Alaskan Native*) and PI (Pacific Islander*).
+            *optionally'
         401:
           description: Missing or incorrect API Key
         403:
@@ -1486,7 +826,9 @@ paths:
       - api_key: []
       summary: '[USES 10 UNITS PER NAME] Infer a US resident''s likely race/ethnicity
         according to US Census taxonomy W_NL (white, non latino), HL (hispano latino),  A
-        (asian, non latino), B_NL (black, non latino).'
+        (asian, non latino), B_NL (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY:
+        USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian
+        or Alaskan Native) and PI (Pacific Islander).'
       tags:
       - personal
   /api2/json/usRaceEthnicityZIP5/{firstName}/{lastName}/{zip5Code}:
@@ -1522,7 +864,8 @@ paths:
                 $ref: '#/components/schemas/FirstLastNameUSRaceEthnicityOut'
           description: 'a US resident''s likely race/ethnicity : W_NL (white, non
             latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non
-            latino).'
+            latino), AI_AN (American Indian or Alaskan Native*) and PI (Pacific Islander*).
+            *optionally'
         401:
           description: Missing or incorrect API Key
         403:
@@ -1532,7 +875,9 @@ paths:
       summary: '[USES 10 UNITS PER NAME] Infer a US resident''s likely race/ethnicity
         according to US Census taxonomy, using (optional) ZIP5 code info. Output is
         W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL
-        (black, non latino).'
+        (black, non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY:
+        USRACEETHNICITY-6CLASSES for two additional classes, AI_AN (American Indian
+        or Alaskan Native) and PI (Pacific Islander).'
       tags:
       - personal
   /api2/json/usRaceEthnicityBatch:
@@ -1550,7 +895,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BatchFirstLastNameUSRaceEthnicityOut'
-          description: A list of US resident's likely race/ethnicity. W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino).
+          description: A list of US resident's likely race/ethnicity. W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino), AI_AN (American Indian or Alaskan Native*) and PI (Pacific Islander*). *optionally
         401:
           description: Missing or incorrect API Key
         403:
@@ -1558,7 +903,11 @@ paths:
       security:
       - api_key: []
       summary: '[USES 10 UNITS PER NAME] Infer up-to 100 US resident''s likely race/ethnicity
-        according to US Census taxonomy.'
+        according to US Census taxonomy. Output is W_NL (white, non latino), HL (hispano
+        latino),  A (asian, non latino), B_NL (black, non latino). Optionally add
+        header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES for two
+        additional classes, AI_AN (American Indian or Alaskan Native) and PI (Pacific
+        Islander).'
       tags:
       - personal
   /api2/json/usZipRaceEthnicityBatch:
@@ -1576,7 +925,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BatchFirstLastNameUSRaceEthnicityOut'
-          description: A list of US resident's likely race/ethnicity. W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino).
+          description: A list of US resident's likely race/ethnicity. W_NL (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black, non latino), AI_AN (American Indian or Alaskan Native*) and PI (Pacific Islander*). *optionally
         401:
           description: Missing or incorrect API Key
         403:
@@ -1584,7 +933,11 @@ paths:
       security:
       - api_key: []
       summary: '[USES 10 UNITS PER NAME] Infer up-to 100 US resident''s likely race/ethnicity
-        according to US Census taxonomy, with (optional) ZIP code.'
+        according to US Census taxonomy, with (optional) ZIP code. Output is W_NL
+        (white, non latino), HL (hispano latino),  A (asian, non latino), B_NL (black,
+        non latino). Optionally add header X-OPTION-USRACEETHNICITY-TAXONOMY: USRACEETHNICITY-6CLASSES
+        for two additional classes, AI_AN (American Indian or Alaskan Native) and
+        PI (Pacific Islander).'
       tags:
       - personal
   /api2/json/diaspora/{countryIso2}/{firstName}/{lastName}:
@@ -1876,7 +1229,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RomanizedNameOut'
+                $ref: '#/components/schemas/NameMatchedOut'
           description: A romanized name.
         401:
           description: Missing or incorrect API Key
@@ -1894,14 +1247,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchFirstLastNameIn'
+              $ref: '#/components/schemas/BatchMatchPersonalFirstLastNameIn'
         description: A list of personal Chinese names in LATIN, firstName = chineseGivenName; lastName=chineseSurname
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BatchNameMatchCandidatesOut'
+                $ref: '#/components/schemas/BatchNameMatchedOut'
           description: A list of genderized names.
         401:
           description: Missing or incorrect API Key
@@ -2046,7 +1399,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RomanizedNameOut'
+                $ref: '#/components/schemas/NameMatchCandidatesOut'
           description: A romanized name.
         401:
           description: Missing or incorrect API Key
@@ -2112,7 +1465,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RomanizedNameOut'
+                $ref: '#/components/schemas/NameMatchCandidatesOut'
           description: A romanized name.
         401:
           description: Missing or incorrect API Key
@@ -2130,7 +1483,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchFirstLastNameIn'
+              $ref: '#/components/schemas/BatchFirstLastNameGenderIn'
         description: A list of personal Chinese names in LATIN, firstName = chineseGivenName; lastName=chineseSurname
       responses:
         200:
@@ -2231,7 +1584,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RomanizedNameOut'
+                $ref: '#/components/schemas/NameMatchCandidatesOut'
           description: A romanized name.
         401:
           description: Missing or incorrect API Key
@@ -2265,7 +1618,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RomanizedNameOut'
+                $ref: '#/components/schemas/NameMatchCandidatesOut'
           description: A romanized name.
         401:
           description: Missing or incorrect API Key
@@ -2299,7 +1652,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RomanizedNameOut'
+                $ref: '#/components/schemas/NameMatchCandidatesOut'
           description: A romanized name.
         401:
           description: Missing or incorrect API Key
@@ -2342,7 +1695,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchFirstLastNameIn'
+              $ref: '#/components/schemas/BatchFirstLastNameGenderIn'
         description: A list of personal japanese names in LATIN, firstName = japaneseGivenName; lastName=japaneseSurname and known gender
       responses:
         200:
@@ -2415,7 +1768,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RomanizedNameOut'
+                $ref: '#/components/schemas/NameMatchedOut'
           description: A romanized name.
         401:
           description: Missing or incorrect API Key
@@ -2456,7 +1809,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RomanizedNameOut'
+                $ref: '#/components/schemas/FeedbackLoopOut'
           description: A romanized name.
         401:
           description: Missing or incorrect API Key
@@ -2475,14 +1828,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchFirstLastNameIn'
+              $ref: '#/components/schemas/BatchMatchPersonalFirstLastNameIn'
         description: A list of personal Japanese names in LATIN, firstName = japaneseGivenName; lastName=japaneseSurname
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BatchNameMatchCandidatesOut'
+                $ref: '#/components/schemas/BatchNameMatchedOut'
           description: A list of matched names.
         401:
           description: Missing or incorrect API Key
@@ -2806,55 +2159,6 @@ paths:
         of up to 100 personal names, with a local context (ISO2 country of residence).'
       tags:
       - social
-  /api2/json/shutdown:
-    get:
-      operationId: shutdown
-      responses:
-        200:
-          description: Shutdown AI.
-        401:
-          description: Missing or incorrect API Key
-      security:
-      - api_key: []
-      summary: Stop learning and shutdown system.
-      tags:
-      - admin
-  /api2/json/flush:
-    get:
-      operationId: flush
-      responses:
-        200:
-          description: Flush API Key caches.
-        401:
-          description: Missing or incorrect API Key
-      security:
-      - api_key: []
-      summary: Flush counters.
-      tags:
-      - admin
-  /api2/json/userInfo/{token}:
-    get:
-      operationId: userInfo
-      parameters:
-      - explode: false
-        in: path
-        name: token
-        required: true
-        schema:
-          type: string
-        style: simple
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIKeyOut'
-          description: An session token
-        401:
-          description: Missing or incorrect token
-      summary: Get the user profile associated with the current google auth session token.
-      tags:
-      - admin
   /api2/json/parseName/{nameFull}:
     get:
       operationId: parseName
@@ -2884,12 +2188,6 @@ paths:
       tags:
       - personal
 components:
-  requestBodies:
-    inline_object:
-      content:
-        '*/*':
-          schema:
-            $ref: '#/components/schemas/inline_object'
   schemas:
     BatchFirstLastNameGenderedOut:
       description: Represents the output of inferring the LIKELY gender from a list of personal names.
@@ -2898,150 +2196,28 @@ components:
         - firstName: firstName
           lastName: lastName
           genderScale: 0.80082819046101150206595775671303272247314453125
-          score: 6.02745618307040320615897144307382404804229736328125
+          score: 60.2745618307040302852328750304877758026123046875
           probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
           likelyGender: male
           id: id
-          category: category
           script: script
         - firstName: firstName
           lastName: lastName
           genderScale: 0.80082819046101150206595775671303272247314453125
-          score: 6.02745618307040320615897144307382404804229736328125
+          score: 60.2745618307040302852328750304877758026123046875
           probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
           likelyGender: male
           id: id
-          category: category
           script: script
       properties:
         personalNames:
+          description: Classified genderized names
           items:
             $ref: '#/components/schemas/FirstLastNameGenderedOut'
           type: array
       type: object
       xml:
         name: BatchFirstLastNameGenderedOut
-    BillingInfoInOut:
-      example:
-        addressCountry: addressCountry
-        addressPostalCode: addressPostalCode
-        customerPhone: customerPhone
-        billingEmail: billingEmail
-        preferredCurrency: preferredCurrency
-        vatID: vatID
-        addressLine1: addressLine1
-        addressLine2: addressLine2
-        addressState: addressState
-        customerName: customerName
-        addressCity: addressCity
-      properties:
-        billingEmail:
-          type: string
-        preferredCurrency:
-          type: string
-        customerName:
-          type: string
-        customerPhone:
-          type: string
-        addressLine1:
-          type: string
-        addressLine2:
-          type: string
-        addressCity:
-          type: string
-        addressPostalCode:
-          type: string
-        addressState:
-          type: string
-        addressCountry:
-          type: string
-        vatID:
-          type: string
-      type: object
-      xml:
-        name: BillingInfoInOut
-    StripeCardOut:
-      properties:
-        defaultCard:
-          type: boolean
-        sourceId:
-          type: string
-        expMonth:
-          format: int64
-          type: integer
-        expYear:
-          format: int64
-          type: integer
-        last4:
-          type: string
-        brand:
-          type: string
-      type: object
-      xml:
-        name: StripeCustomerOut
-    BatchParsedFullNameGeoIn:
-      example:
-        personalNames:
-        - firstName: firstName
-          lastName: lastName
-          prefixOrTitle: prefixOrTitle
-          middleName: middleName
-          id: id
-          countryIso2: countryIso2
-          suffix: suffix
-        - firstName: firstName
-          lastName: lastName
-          prefixOrTitle: prefixOrTitle
-          middleName: middleName
-          id: id
-          countryIso2: countryIso2
-          suffix: suffix
-      properties:
-        personalNames:
-          items:
-            $ref: '#/components/schemas/ParsedFullNameGeoIn'
-          type: array
-      type: object
-      xml:
-        name: BatchParsedFullNameGeoIn
-    UserInfoOut:
-      properties:
-        uid:
-          type: string
-        email:
-          type: string
-        phoneNumber:
-          type: string
-        emailVerified:
-          type: boolean
-        displayName:
-          type: string
-        photoUrl:
-          type: string
-        disabled:
-          type: boolean
-        firstKnownIpAddress:
-          type: string
-        providerId:
-          type: string
-        timeStamp:
-          format: int64
-          type: integer
-        verifyToken:
-          type: string
-        apiKey:
-          type: string
-        stripePerishableKey:
-          type: string
-        stripeCustomerId:
-          type: string
-        otherInfos:
-          items:
-            $ref: '#/components/schemas/UserInfoOut'
-          type: array
-      type: object
-      xml:
-        name: UserInfoOut
     FirstLastNamePhoneNumberIn:
       example:
         firstName: firstName
@@ -3055,7 +2231,7 @@ components:
           regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 8.0082819046101150206595775671303272247314453125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -3063,7 +2239,6 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
-          category: category
           countryOriginAlt: countryOriginAlt
       properties:
         id:
@@ -3086,53 +2261,60 @@ components:
       xml:
         name: FirstLastNamePhoneNumberIn
     APICounterV2Out:
+      description: Detailed usage as reported by the deduplicating API counter.
+      example:
+        apiKey:
+          striped: true
+          apiKey: apiKey
+          partner: true
+          corporate: true
+          anonymized: true
+          learnable: true
+          admin: true
+          disabled: true
+          userId: userId
+          vetted: true
+        serviceFeaturesUsage:
+          key: 5
+        apiService: apiService
+        createdDateTime: 0
+        lastFlushedDateTime: 1
+        totalUsage: 6
+        lastUsedDateTime: 5
       properties:
         apiKey:
           $ref: '#/components/schemas/APIKeyOut'
         apiService:
+          description: The apiService corresponds to the classifier name.
           type: string
         createdDateTime:
+          description: The create datetime of the counter.
           format: int64
           type: integer
         totalUsage:
+          description: The usage of the counter.
           format: int64
           type: integer
         lastFlushedDateTime:
+          description: The flush datetime of the counter.
           format: int64
           type: integer
         lastUsedDateTime:
+          description: The last usage datetime of the counter.
           format: int64
           type: integer
         serviceFeaturesUsage:
           additionalProperties:
+            description: Usage of special features, such as Chinese, Japanese.
             format: int64
             type: integer
+          description: Usage of special features, such as Chinese, Japanese.
           type: object
       type: object
       xml:
         name: APICallStatOut
-    APIPlanOut:
-      example:
-        planQuota: 6
-        price: 1.46581298050294517310021547018550336360931396484375
-        planName: planName
-        priceOverage: 5.962133916683182377482808078639209270477294921875
-      properties:
-        planName:
-          type: string
-        planQuota:
-          format: int64
-          type: integer
-        price:
-          format: double
-          type: number
-        priceOverage:
-          format: double
-          type: number
-      type: object
-      xml:
-        name: APIPlanOut
     NameMatchCandidatesOut:
+      description: Classified matched names
       example:
         firstName: firstName
         lastName: lastName
@@ -3147,7 +2329,6 @@ components:
           probability: 0.80082819046101150206595775671303272247314453125
           predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
         id: id
-        category: category
         script: script
       properties:
         script:
@@ -3155,75 +2336,24 @@ components:
         id:
           type: string
         firstName:
+          description: The first name (also known as given name)
           type: string
         lastName:
+          description: The last name (also known as family name, or surname)
           type: string
         orderOption:
+          description: The option for ordering
           type: string
         matchCandidates:
+          description: The ordered list of name matching candidates
           items:
             $ref: '#/components/schemas/NameMatchCandidateOut'
           type: array
-        category:
-          type: string
       type: object
       xml:
         name: NameMatchCandidatesOut
-    CacheMetricsOut:
-      description: Simple metrics system caches
-      example:
-        cacheName: cacheName
-        cacheStats: cacheStats
-      properties:
-        cacheName:
-          type: string
-        cacheStats:
-          type: string
-      type: object
-      xml:
-        name: CacheMetricsOut
-    ParsedFullNameGeoIn:
-      example:
-        firstName: firstName
-        lastName: lastName
-        prefixOrTitle: prefixOrTitle
-        middleName: middleName
-        id: id
-        countryIso2: countryIso2
-        suffix: suffix
-      properties:
-        id:
-          type: string
-          xml:
-            attribute: true
-        firstName:
-          type: string
-          xml:
-            attribute: true
-        lastName:
-          type: string
-          xml:
-            attribute: true
-        prefixOrTitle:
-          type: string
-          xml:
-            attribute: true
-        suffix:
-          type: string
-          xml:
-            attribute: true
-        middleName:
-          type: string
-          xml:
-            attribute: true
-        countryIso2:
-          type: string
-          xml:
-            attribute: true
-      type: object
-      xml:
-        name: ParsedFullNameGeoIn
     SoftwareVersionOut:
+      description: The software version.
       example:
         softwareNameAndVersion: softwareNameAndVersion
         softwareVersion:
@@ -3231,9 +2361,12 @@ components:
         - 0
       properties:
         softwareNameAndVersion:
+          description: The software version
           type: string
         softwareVersion:
+          description: The software version major minor build
           items:
+            description: The software version major minor build
             format: int32
             type: integer
           type: array
@@ -3241,16 +2374,28 @@ components:
       xml:
         name: SoftwareVersionOut
     APIClassifierOut:
+      description: The list of classifiers and versions.
+      example:
+        probabilityCalibrated: true
+        shuttingDown: true
+        learning: true
+        classifierName: classifierName
+        serving: true
       properties:
         classifierName:
+          description: The classifier name
           type: string
         serving:
+          description: True if the classifier is serving requests (has reached minimal learning, is not shutting down)
           type: boolean
         learning:
+          description: True if the classifier is learning
           type: boolean
         shuttingDown:
+          description: True if the classifier is shutting down
           type: boolean
         probabilityCalibrated:
+          description: True if the classifier has finished the initial learning and calibrated probabilities (meanwhile, during initial learning, probabilities will be equal to -1)
           type: boolean
       type: object
       xml:
@@ -3272,6 +2417,7 @@ components:
       xml:
         name: NameIn
     APIPlanSubscriptionOut:
+      description: The API Plan governing the subscription.
       example:
         stripeStatus: stripeStatus
         planBaseFeesKey: planBaseFeesKey
@@ -3294,57 +2440,82 @@ components:
         priorPlanStarted: 6
       properties:
         apiKey:
+          description: User API Key.
           type: string
         planStarted:
+          description: Datetime when the user subscribed to the current plan.
           format: int64
           type: integer
         priorPlanStarted:
+          description: Datetime when the user subscribed to the prior plan.
           format: int64
           type: integer
         planEnded:
+          description: Datetime when the user ended the plan.
           format: int64
           type: integer
         taxRate:
+          description: Applicable tax rate for the plan.
           format: double
           type: number
         planName:
+          description: Current plan name.
           type: string
         planBaseFeesKey:
+          description: Current plan key (as in Stripe product).
           type: string
         planStatus:
+          description: Plan status.
           type: string
         planQuota:
+          description: 'Current plan quota in quantity of units (NB: some API use
+            several units per name).'
           format: int64
           type: integer
         priceUSD:
+          description: Current plan monthly price expressed in USD (includes a free quota).
           format: double
           type: number
         priceOverageUSD:
+          description: Current plan price for overages expressed in USD (extra price per unit above the free quota).
           format: double
           type: number
         price:
+          description: Current plan price for overages expressed in Currency (extra price per unit above the free quota).
           format: double
           type: number
         priceOverage:
+          description: Current plan price for overages expressed in Currency (extra price per unit above the free quota).
           format: double
           type: number
         currency:
+          description: Current plan Currency for prices.
           type: string
         currencyFactor:
+          description: For USD, GBP, EUR - the factor is 1.
           format: double
           type: number
         stripeCustomerId:
+          description: Stripe customer identifier.
           type: string
         stripeStatus:
+          description: Stripe status ex active.
           type: string
         stripeSubscription:
+          description: Stripe subscription identifier.
           type: string
         userId:
+          description: Internal user identifier.
           type: string
       type: object
       xml:
         name: APIPlanSubscriptionOut
     FirstLastNameGenderIn:
+      example:
+        firstName: firstName
+        lastName: lastName
+        gender: gender
+        id: id
       properties:
         id:
           type: string
@@ -3359,6 +2530,7 @@ components:
           xml:
             attribute: true
         gender:
+          description: The known gender of the name
           type: string
           xml:
             attribute: true
@@ -3397,11 +2569,10 @@ components:
         firstName: firstName
         lastName: lastName
         genderScale: 0.80082819046101150206595775671303272247314453125
-        score: 6.02745618307040320615897144307382404804229736328125
+        score: 60.2745618307040302852328750304877758026123046875
         probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
         likelyGender: male
         id: id
-        category: category
         script: script
       properties:
         script:
@@ -3409,8 +2580,10 @@ components:
         id:
           type: string
         firstName:
+          description: The first name (also known as given name)
           type: string
         lastName:
+          description: The last name (also known as family name, or surname)
           type: string
         likelyGender:
           description: Most likely gender
@@ -3424,17 +2597,21 @@ components:
           format: double
           type: number
         score:
+          description: 'Compatibility to NamSor_v1 Gender score value. Higher score
+            is better, but score is not normalized. Use calibratedProbability if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
         probabilityCalibrated:
+          description: The calibrated probability for inferred gender to have been guessed correctly.
           format: double
           type: number
-        category:
-          type: string
       type: object
       xml:
         name: FirstLastNameGenderedOut
     APIKeyOut:
+      description: The API Key.
       example:
         striped: true
         apiKey: apiKey
@@ -3448,26 +2625,36 @@ components:
         vetted: true
       properties:
         apiKey:
+          description: The user API Key.
           type: string
           xml:
             name: api_key
         userId:
+          description: The user identifier.
           type: string
         admin:
+          description: The API Key has admin role.
           type: boolean
         vetted:
+          description: The API Key is vetted (assumed truthful) for machine learning.
           type: boolean
         learnable:
+          description: The API Key is learnable (without assuming truthfulness) for machine learning. Set learnable=false and anonymized=true for highest privacy (ie. to forget data as it's processed).
           type: boolean
         anonymized:
+          description: The API Key is anonymized (using SHA-252 digest for logging). Set learnable=false and anonymized=true for highest privacy (ie. to forget data as it's processed).
           type: boolean
         partner:
+          description: The API Key has partner role.
           type: boolean
         striped:
+          description: The API Key is associated to a valid Stripe account.
           type: boolean
         corporate:
+          description: The API Key has role corporate (ex SWIFT payments instead of Stripe payments).
           type: boolean
         disabled:
+          description: The API Key is temporarily or permanently disabled.
           type: boolean
       type: object
       xml:
@@ -3478,265 +2665,71 @@ components:
         personalNames:
         - firstName: firstName
           lastName: lastName
-          score: 5.962133916683182377482808078639209270477294921875
-          ethnicity: ethnicity
+          score: 59.62133916683182377482808078639209270477294921875
+          ethnicity: Chinese
           lifted: true
-          ethnicityAlt: ethnicityAlt
+          ethnicityAlt: Japanese
           id: id
           countryIso2: countryIso2
-          category: category
           ethnicitiesTop:
           - ethnicitiesTop
           - ethnicitiesTop
           script: script
         - firstName: firstName
           lastName: lastName
-          score: 5.962133916683182377482808078639209270477294921875
-          ethnicity: ethnicity
+          score: 59.62133916683182377482808078639209270477294921875
+          ethnicity: Chinese
           lifted: true
-          ethnicityAlt: ethnicityAlt
+          ethnicityAlt: Japanese
           id: id
           countryIso2: countryIso2
-          category: category
           ethnicitiesTop:
           - ethnicitiesTop
           - ethnicitiesTop
           script: script
       properties:
         personalNames:
+          description: Classified diaspora names
           items:
             $ref: '#/components/schemas/FirstLastNameDiasporaedOut'
           type: array
       type: object
       xml:
         name: BatchFirstLastNameDiasporaedOut
-    BillingHistoryOut:
-      example:
-        stripeInvoices:
-        - dueDate: 2000-01-23T04:56:07.000+00:00
-          description: description
-          isStriped: true
-          tax: 7
-          subTotal: 2
-          invoiceDate: 2000-01-23T04:56:07.000+00:00
-          userId: userId
-          amountDue: 1
-          invoicePdf: invoicePdf
-          total: 3
-          amountPaid: 5
-          amountRemaining: 5
-          taxPercent: 9
-          invoiceId: invoiceId
-          currency: currency
-          attempted: true
-          stripeCustomerId: stripeCustomerId
-          invoiceStatus: invoiceStatus
-          items:
-          - itemId: itemId
-            amount: 0
-            quantity: 6
-            planDesc: planDesc
-            planNickname: planNickname
-            description: description
-            planName: planName
-            currency: currency
-            subscription: subscription
-            subscriptionItem: subscriptionItem
-            invoiceItemType: invoiceItemType
-          - itemId: itemId
-            amount: 0
-            quantity: 6
-            planDesc: planDesc
-            planNickname: planNickname
-            description: description
-            planName: planName
-            currency: currency
-            subscription: subscription
-            subscriptionItem: subscriptionItem
-            invoiceItemType: invoiceItemType
-          periodStart: 2000-01-23T04:56:07.000+00:00
-          receiptNumber: receiptNumber
-          periodEnd: 2000-01-23T04:56:07.000+00:00
-        - dueDate: 2000-01-23T04:56:07.000+00:00
-          description: description
-          isStriped: true
-          tax: 7
-          subTotal: 2
-          invoiceDate: 2000-01-23T04:56:07.000+00:00
-          userId: userId
-          amountDue: 1
-          invoicePdf: invoicePdf
-          total: 3
-          amountPaid: 5
-          amountRemaining: 5
-          taxPercent: 9
-          invoiceId: invoiceId
-          currency: currency
-          attempted: true
-          stripeCustomerId: stripeCustomerId
-          invoiceStatus: invoiceStatus
-          items:
-          - itemId: itemId
-            amount: 0
-            quantity: 6
-            planDesc: planDesc
-            planNickname: planNickname
-            description: description
-            planName: planName
-            currency: currency
-            subscription: subscription
-            subscriptionItem: subscriptionItem
-            invoiceItemType: invoiceItemType
-          - itemId: itemId
-            amount: 0
-            quantity: 6
-            planDesc: planDesc
-            planNickname: planNickname
-            description: description
-            planName: planName
-            currency: currency
-            subscription: subscription
-            subscriptionItem: subscriptionItem
-            invoiceItemType: invoiceItemType
-          periodStart: 2000-01-23T04:56:07.000+00:00
-          receiptNumber: receiptNumber
-          periodEnd: 2000-01-23T04:56:07.000+00:00
-        corporateInvoices:
-        - dueDate: 2000-01-23T04:56:07.000+00:00
-          description: description
-          isStriped: true
-          tax: 7
-          subTotal: 2
-          invoiceDate: 2000-01-23T04:56:07.000+00:00
-          userId: userId
-          amountDue: 1
-          invoicePdf: invoicePdf
-          total: 3
-          amountPaid: 5
-          amountRemaining: 5
-          taxPercent: 9
-          invoiceId: invoiceId
-          currency: currency
-          attempted: true
-          stripeCustomerId: stripeCustomerId
-          invoiceStatus: invoiceStatus
-          items:
-          - itemId: itemId
-            amount: 0
-            quantity: 6
-            planDesc: planDesc
-            planNickname: planNickname
-            description: description
-            planName: planName
-            currency: currency
-            subscription: subscription
-            subscriptionItem: subscriptionItem
-            invoiceItemType: invoiceItemType
-          - itemId: itemId
-            amount: 0
-            quantity: 6
-            planDesc: planDesc
-            planNickname: planNickname
-            description: description
-            planName: planName
-            currency: currency
-            subscription: subscription
-            subscriptionItem: subscriptionItem
-            invoiceItemType: invoiceItemType
-          periodStart: 2000-01-23T04:56:07.000+00:00
-          receiptNumber: receiptNumber
-          periodEnd: 2000-01-23T04:56:07.000+00:00
-        - dueDate: 2000-01-23T04:56:07.000+00:00
-          description: description
-          isStriped: true
-          tax: 7
-          subTotal: 2
-          invoiceDate: 2000-01-23T04:56:07.000+00:00
-          userId: userId
-          amountDue: 1
-          invoicePdf: invoicePdf
-          total: 3
-          amountPaid: 5
-          amountRemaining: 5
-          taxPercent: 9
-          invoiceId: invoiceId
-          currency: currency
-          attempted: true
-          stripeCustomerId: stripeCustomerId
-          invoiceStatus: invoiceStatus
-          items:
-          - itemId: itemId
-            amount: 0
-            quantity: 6
-            planDesc: planDesc
-            planNickname: planNickname
-            description: description
-            planName: planName
-            currency: currency
-            subscription: subscription
-            subscriptionItem: subscriptionItem
-            invoiceItemType: invoiceItemType
-          - itemId: itemId
-            amount: 0
-            quantity: 6
-            planDesc: planDesc
-            planNickname: planNickname
-            description: description
-            planName: planName
-            currency: currency
-            subscription: subscription
-            subscriptionItem: subscriptionItem
-            invoiceItemType: invoiceItemType
-          periodStart: 2000-01-23T04:56:07.000+00:00
-          receiptNumber: receiptNumber
-          periodEnd: 2000-01-23T04:56:07.000+00:00
-      properties:
-        stripeInvoices:
-          items:
-            $ref: '#/components/schemas/InvoiceOut'
-          type: array
-        corporateInvoices:
-          items:
-            $ref: '#/components/schemas/InvoiceOut'
-          type: array
-      type: object
-      xml:
-        name: BillingHistoryOut
     BatchPersonalNameGeoOut:
       example:
         personalNames:
-        - country: country
+        - score: 8.0082819046101150206595775671303272247314453125
+          country: country
           topRegion: topRegion
           subRegion: subRegion
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
-          countryAlt: countryAlt
-          script: script
-          score: 0.80082819046101150206595775671303272247314453125
           countriesTop:
           - countriesTop
           - countriesTop
           name: name
+          countryAlt: countryAlt
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           id: id
           region: region
-          category: category
-        - country: country
+          script: script
+        - score: 8.0082819046101150206595775671303272247314453125
+          country: country
           topRegion: topRegion
           subRegion: subRegion
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
-          countryAlt: countryAlt
-          script: script
-          score: 0.80082819046101150206595775671303272247314453125
           countriesTop:
           - countriesTop
           - countriesTop
           name: name
+          countryAlt: countryAlt
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           id: id
           region: region
-          category: category
+          script: script
       properties:
         personalNames:
+          description: Classified geo names
           items:
             $ref: '#/components/schemas/PersonalNameGeoOut'
           type: array
@@ -3744,10 +2737,28 @@ components:
       xml:
         name: BatchPersonalNameGeoOut
     APIClassifiersStatusOut:
+      example:
+        classifiers:
+        - probabilityCalibrated: true
+          shuttingDown: true
+          learning: true
+          classifierName: classifierName
+          serving: true
+        - probabilityCalibrated: true
+          shuttingDown: true
+          learning: true
+          classifierName: classifierName
+          serving: true
+        softwareVersion:
+          softwareNameAndVersion: softwareNameAndVersion
+          softwareVersion:
+          - 0
+          - 0
       properties:
         softwareVersion:
           $ref: '#/components/schemas/SoftwareVersionOut'
         classifiers:
+          description: The list of classifiers and versions.
           items:
             $ref: '#/components/schemas/APIClassifierOut'
           type: array
@@ -3755,12 +2766,12 @@ components:
       xml:
         name: APIClassifiersStatusOut
     ProperNounCategorizedOut:
+      description: Classified typed proper names
       example:
-        score: 0.80082819046101150206595775671303272247314453125
+        score: 8.0082819046101150206595775671303272247314453125
         commonTypeAlt: commonTypeAlt
         name: name
         id: id
-        category: category
         script: script
         commonType: commonType
       properties:
@@ -3769,79 +2780,33 @@ components:
         id:
           type: string
         name:
+          description: The input name
           type: string
         commonType:
+          description: The most likely common name type
           type: string
         commonTypeAlt:
+          description: 'Best alternative for : The most likely common name type'
           type: string
         score:
+          description: 'Higher score is better, but score is not normalized. Use calibratedProbability
+            if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
-        category:
-          type: string
       type: object
       xml:
         name: ProperNounCategorizedOut
-    SourceMetricsOut:
-      description: Simple metrics on a classifier, for a given source
-      example:
-        snapshotDate: 6
-        aiLearnTotal: 2
-        metricTimeStamp: 6
-        aiEstimatePrecision: 6.438423552598546706349225132726132869720458984375
-        aiStartTime: 1
-        aiEstimateTotal: 9
-        source:
-          striped: true
-          apiKey: apiKey
-          partner: true
-          corporate: true
-          anonymized: true
-          learnable: true
-          admin: true
-          disabled: true
-          userId: userId
-          vetted: true
-        classifierName: classifierName
-        aiEstimateRecall: 3.557195227068097320710649000830017030239105224609375
-      properties:
-        classifierName:
-          type: string
-        source:
-          $ref: '#/components/schemas/APIKeyOut'
-        aiEstimateTotal:
-          format: int64
-          type: integer
-        aiEstimatePrecision:
-          format: double
-          type: number
-        aiEstimateRecall:
-          format: double
-          type: number
-        metricTimeStamp:
-          format: int64
-          type: integer
-        aiStartTime:
-          format: int64
-          type: integer
-        aiLearnTotal:
-          format: int64
-          type: integer
-        snapshotDate:
-          format: int64
-          type: integer
-      type: object
-      xml:
-        name: SourceMetricsOut
     PersonalNameGenderedOut:
+      description: Classified genderized names
       example:
         genderScale: 0.80082819046101150206595775671303272247314453125
-        score: 6.02745618307040320615897144307382404804229736328125
+        score: 60.2745618307040302852328750304877758026123046875
         probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
         name: name
         likelyGender: male
         id: id
-        category: category
         script: script
       properties:
         script:
@@ -3849,6 +2814,7 @@ components:
         id:
           type: string
         name:
+          description: The input name
           type: string
         likelyGender:
           description: Most likely gender
@@ -3862,13 +2828,16 @@ components:
           format: double
           type: number
         score:
+          description: 'Compatibility to NamSor_v1 Gender score value. Higher score
+            is better, but score is not normalized. Use calibratedProbability if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
         probabilityCalibrated:
+          description: The calibrated probability for inferred gender to have been guessed correctly.
           format: double
           type: number
-        category:
-          type: string
       type: object
       xml:
         name: PersonalNameGenderedOut
@@ -3881,7 +2850,7 @@ components:
         regionOrigin: regionOrigin
         topRegionOrigin: topRegionOrigin
         firstName: firstName
-        score: 0.80082819046101150206595775671303272247314453125
+        score: 8.0082819046101150206595775671303272247314453125
         subRegionOrigin: subRegionOrigin
         probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
         countriesOriginTop:
@@ -3889,7 +2858,6 @@ components:
         - countriesOriginTop
         id: id
         countryOrigin: countryOrigin
-        category: category
         countryOriginAlt: countryOriginAlt
       properties:
         script:
@@ -3897,8 +2865,10 @@ components:
         id:
           type: string
         firstName:
+          description: The first name (also known as given name)
           type: string
         lastName:
+          description: The last name (also known as family name, or surname)
           type: string
         countryOrigin:
           description: Most likely country of Origin
@@ -3913,26 +2883,29 @@ components:
             type: string
           type: array
         score:
-          description: Compatibility to NamSor_v1 Origin score value
+          description: 'Compatibility to NamSor_v1 Origin score value. Higher score
+            is better, but score is not normalized. Use calibratedProbability if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
         regionOrigin:
           description: Most likely region of Origin (based on countryOrigin ISO2 code)
           type: string
         topRegionOrigin:
-          description: Most likely region of Origin (based on countryOrigin ISO2 code)
+          description: Most likely top region of Origin (based on countryOrigin ISO2 code)
           type: string
         subRegionOrigin:
-          description: Most likely region of Origin (based on countryOrigin ISO2 code)
+          description: Most likely sub region of Origin (based on countryOrigin ISO2 code)
           type: string
         probabilityCalibrated:
+          description: The calibrated probability for countryOrigin to have been guessed correctly.
           format: double
           type: number
         probabilityAltCalibrated:
+          description: The calibrated probability for countryOrigin OR countryOriginAlt to have been guessed correctly.
           format: double
           type: number
-        category:
-          type: string
       type: object
       xml:
         name: FirstLastNameOriginedOut
@@ -3954,6 +2927,16 @@ components:
       xml:
         name: BatchNameGeoIn
     BatchFirstLastNameGenderIn:
+      example:
+        personalNames:
+        - firstName: firstName
+          lastName: lastName
+          gender: gender
+          id: id
+        - firstName: firstName
+          lastName: lastName
+          gender: gender
+          id: id
       properties:
         personalNames:
           items:
@@ -3962,60 +2945,18 @@ components:
       type: object
       xml:
         name: BatchFirstLastNameGenderIn
-    InvoiceItemOut:
-      example:
-        itemId: itemId
-        amount: 0
-        quantity: 6
-        planDesc: planDesc
-        planNickname: planNickname
-        description: description
-        planName: planName
-        currency: currency
-        subscription: subscription
-        subscriptionItem: subscriptionItem
-        invoiceItemType: invoiceItemType
-      properties:
-        itemId:
-          type: string
-        amount:
-          format: int64
-          type: integer
-        currency:
-          type: string
-        description:
-          type: string
-        quantity:
-          format: int64
-          type: integer
-        subscription:
-          type: string
-        subscriptionItem:
-          type: string
-        invoiceItemType:
-          type: string
-        planNickname:
-          type: string
-        planDesc:
-          type: string
-        planName:
-          type: string
-      type: object
-      xml:
-        name: InvoiceItemOut
     CorridorOut:
       description: Represent multiple classifications for corridor sender and receiver (gender, country, origin, diaspora)
       example:
         FirstLastNameDiasporaedOut:
           firstName: firstName
           lastName: lastName
-          score: 5.962133916683182377482808078639209270477294921875
-          ethnicity: ethnicity
+          score: 59.62133916683182377482808078639209270477294921875
+          ethnicity: Chinese
           lifted: true
-          ethnicityAlt: ethnicityAlt
+          ethnicityAlt: Japanese
           id: id
           countryIso2: countryIso2
-          category: category
           ethnicitiesTop:
           - ethnicitiesTop
           - ethnicitiesTop
@@ -4024,14 +2965,12 @@ components:
           firstName: firstName
           lastName: lastName
           genderScale: 0.80082819046101150206595775671303272247314453125
-          score: 6.02745618307040320615897144307382404804229736328125
+          score: 60.2745618307040302852328750304877758026123046875
           probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
           likelyGender: male
           id: id
-          category: category
           script: script
         id: id
-        category: category
         script: script
         FirstLastNameOriginedOut:
           lastName: lastName
@@ -4040,7 +2979,7 @@ components:
           regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 8.0082819046101150206595775671303272247314453125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -4048,7 +2987,6 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
-          category: category
           countryOriginAlt: countryOriginAlt
       properties:
         id:
@@ -4063,14 +3001,23 @@ components:
           $ref: '#/components/schemas/FirstLastNameDiasporaedOut'
         script:
           type: string
-        category:
-          type: string
       type: object
       xml:
         name: CorridorOut
     BatchNameMatchedOut:
+      example:
+        matchedNames:
+        - score: 0.80082819046101150206595775671303272247314453125
+          matchStatus: matchStatus
+          id: id
+          script: script
+        - score: 0.80082819046101150206595775671303272247314453125
+          matchStatus: matchStatus
+          id: id
+          script: script
       properties:
         matchedNames:
+          description: Classified matched names
           items:
             $ref: '#/components/schemas/NameMatchedOut'
           type: array
@@ -4093,7 +3040,6 @@ components:
             probability: 0.80082819046101150206595775671303272247314453125
             predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
           id: id
-          category: category
           script: script
         - firstName: firstName
           lastName: lastName
@@ -4108,10 +3054,10 @@ components:
             probability: 0.80082819046101150206595775671303272247314453125
             predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
           id: id
-          category: category
           script: script
       properties:
         namesAndMatchCandidates:
+          description: Classified matched names
           items:
             $ref: '#/components/schemas/NameMatchCandidatesOut'
           type: array
@@ -4121,34 +3067,31 @@ components:
     BatchPersonalNameParsedOut:
       example:
         personalNames:
-        - score: 0.80082819046101150206595775671303272247314453125
+        - score: 8.0082819046101150206595775671303272247314453125
           firstLastName:
             firstName: firstName
             lastName: lastName
             id: id
-            category: category
             script: script
           name: name
           id: id
-          category: category
           script: script
           nameParserTypeAlt: nameParserTypeAlt
           nameParserType: nameParserType
-        - score: 0.80082819046101150206595775671303272247314453125
+        - score: 8.0082819046101150206595775671303272247314453125
           firstLastName:
             firstName: firstName
             lastName: lastName
             id: id
-            category: category
             script: script
           name: name
           id: id
-          category: category
           script: script
           nameParserTypeAlt: nameParserTypeAlt
           nameParserType: nameParserType
       properties:
         personalNames:
+          description: Classified parsed names
           items:
             $ref: '#/components/schemas/PersonalNameParsedOut'
           type: array
@@ -4160,13 +3103,12 @@ components:
       example:
         firstName: firstName
         lastName: lastName
-        score: 5.962133916683182377482808078639209270477294921875
-        ethnicity: ethnicity
+        score: 59.62133916683182377482808078639209270477294921875
+        ethnicity: Chinese
         lifted: true
-        ethnicityAlt: ethnicityAlt
+        ethnicityAlt: Japanese
         id: id
         countryIso2: countryIso2
-        category: category
         ethnicitiesTop:
         - ethnicitiesTop
         - ethnicitiesTop
@@ -4177,37 +3119,46 @@ components:
         id:
           type: string
         firstName:
+          description: The first name (also known as given name)
           type: string
         lastName:
+          description: The last name (also known as family name, or surname)
           type: string
         score:
-          description: Compatibility to NamSor_v1 Origin score value
+          description: 'Compatibility to NamSor_v1 Diaspora score value. Higher score
+            is better, but score is not normalized. Use calibratedProbability if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
         ethnicityAlt:
+          description: The second best alternative ethnicity
+          example: Japanese
           type: string
           xml:
             attribute: true
         ethnicity:
+          description: The most likely ethnicity
+          example: Chinese
           type: string
           xml:
             attribute: true
         lifted:
+          description: Indicates if the output ethnicity is based on machine learning only, or further lifted as a known fact by a country-specific rule. Let us know if you believe ethnicity is incorrect on a specific case where lifted is true.
           type: boolean
           xml:
             attribute: true
         countryIso2:
+          description: From input data, the countryIso2 of geographic context (US,CA etc.)
           type: string
           xml:
             attribute: true
         ethnicitiesTop:
-          description: List ethnicities (top 10)
+          description: List most likely ethnicities (top 10)
           items:
-            description: List ethnicities (top 10)
+            description: List most likely ethnicities (top 10)
             type: string
           type: array
-        category:
-          type: string
       type: object
       xml:
         name: FirstLastNameDiasporaedOut
@@ -4215,23 +3166,22 @@ components:
       example:
         personalNames:
         - genderScale: 0.80082819046101150206595775671303272247314453125
-          score: 6.02745618307040320615897144307382404804229736328125
+          score: 60.2745618307040302852328750304877758026123046875
           probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
           name: name
           likelyGender: male
           id: id
-          category: category
           script: script
         - genderScale: 0.80082819046101150206595775671303272247314453125
-          score: 6.02745618307040320615897144307382404804229736328125
+          score: 60.2745618307040302852328750304877758026123046875
           probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
           name: name
           likelyGender: male
           id: id
-          category: category
           script: script
       properties:
         personalNames:
+          description: Classified genderized names
           items:
             $ref: '#/components/schemas/PersonalNameGenderedOut'
           type: array
@@ -4239,52 +3189,66 @@ components:
       xml:
         name: BatchPersonalNameGenderedOut
     FeedbackLoopOut:
+      example:
+        feedbackCredits: 0
       properties:
         feedbackCredits:
+          description: Number of units recredited as per feedback loop successful classification
           format: int64
           type: integer
       type: object
       xml:
         name: FeedbackLoopOut
     APIBillingPeriodUsageOut:
+      description: The current billing period.
       example:
         apiKey: apiKey
-        periodStarted: 6
-        stripeCurrentPeriodEnd: 5
-        usage: 2
-        hardLimit: 9
-        subscriptionStarted: 0
+        periodStarted: 7
+        stripeCurrentPeriodEnd: 1
+        usage: 6
+        hardLimit: 1
+        subscriptionStarted: 4
         periodEnded: 1
         billingStatus: billingStatus
-        stripeCurrentPeriodStart: 5
+        stripeCurrentPeriodStart: 1
         softLimit: 7
       properties:
         apiKey:
+          description: User API Key.
           type: string
         subscriptionStarted:
+          description: Datetime when the user subscribed to the plan.
           format: int64
           type: integer
         periodStarted:
+          description: Datetime when the the plan's current period started.
           format: int64
           type: integer
         periodEnded:
+          description: Datetime when the the plan's current period endend.
           format: int64
           type: integer
         stripeCurrentPeriodEnd:
+          description: Datetime when the the plan's current period endend (in Stripe). Internal and Stripe periodicity should ~coincide.
           format: int64
           type: integer
         stripeCurrentPeriodStart:
+          description: Datetime when the the plan's current period started (in Stripe). Internal and Stripe periodicity should ~coincide.
           format: int64
           type: integer
         billingStatus:
+          description: Current period billing status ex OPEN.
           type: string
         usage:
+          description: Current period usage in units (NB some API endpoints use more than one unit).
           format: int64
           type: integer
         softLimit:
+          description: Current period soft limit (reaching the limit sends an email notification).
           format: int64
           type: integer
         hardLimit:
+          description: Current period hard limit (reaching the limit sends an email notification and blocks the API Key).
           format: int64
           type: integer
       type: object
@@ -4292,18 +3256,18 @@ components:
         name: APIBillingPeriodUsageOut
     APIPeriodUsageOut:
       example:
-        overageInclTax: 2.027123023002321833274663731572218239307403564453125
-        overageQuantity: 4
+        overageInclTax: 5.02500479152029466689555192715488374233245849609375
+        overageQuantity: 9
         billingPeriod:
           apiKey: apiKey
-          periodStarted: 6
-          stripeCurrentPeriodEnd: 5
-          usage: 2
-          hardLimit: 9
-          subscriptionStarted: 0
+          periodStarted: 7
+          stripeCurrentPeriodEnd: 1
+          usage: 6
+          hardLimit: 1
+          subscriptionStarted: 4
           periodEnded: 1
           billingStatus: billingStatus
-          stripeCurrentPeriodStart: 5
+          stripeCurrentPeriodStart: 1
           softLimit: 7
         overageCurrency: overageCurrency
         subscription:
@@ -4326,21 +3290,25 @@ components:
           stripeSubscription: stripeSubscription
           stripeCustomerId: stripeCustomerId
           priorPlanStarted: 6
-        overageExclTax: 3.61607674925191080461672754609026014804840087890625
+        overageExclTax: 4.9652184929849543237878606305457651615142822265625
       properties:
         subscription:
           $ref: '#/components/schemas/APIPlanSubscriptionOut'
         billingPeriod:
           $ref: '#/components/schemas/APIBillingPeriodUsageOut'
         overageExclTax:
+          description: Overage amount including any tax.
           format: double
           type: number
         overageInclTax:
+          description: Overage amount including tax (if applicable).
           format: double
           type: number
         overageCurrency:
+          description: Currency of the overage amount.
           type: string
         overageQuantity:
+          description: Quantity above monthly quota of the current subscritpion, in units.
           format: int64
           type: integer
       type: object
@@ -4362,14 +3330,6 @@ components:
       type: object
       xml:
         name: PersonalNameIn
-    NamSorCounterOut:
-      properties:
-        counter:
-          format: int64
-          type: integer
-      type: object
-      xml:
-        name: NamSorCounterOut
     BatchCorridorIn:
       example:
         corridorFromTo:
@@ -4403,77 +3363,80 @@ components:
       type: object
       xml:
         name: BatchCorridorIn
-    SourceDetailedMetricsOut:
-      description: Simple metrics on source, with details by classifier.
-      properties:
-        classifierName:
-          type: string
-        source:
-          $ref: '#/components/schemas/APIKeyOut'
-        aiEstimateTotal:
-          format: int64
-          type: integer
-        aiEstimatePrecision:
-          format: double
-          type: number
-        aiEstimateRecall:
-          format: double
-          type: number
-        metricTimeStamp:
-          format: int64
-          type: integer
-        aiStartTime:
-          format: int64
-          type: integer
-        aiLearnTotal:
-          format: int64
-          type: integer
-        snapshotDate:
-          format: int64
-          type: integer
-        expectedClassMetrics:
-          items:
-            $ref: '#/components/schemas/ExpectedClassMetricsOut'
-          type: array
-      type: object
-      xml:
-        name: SourceDetailedMetricsOut
     APIUsageAggregatedOut:
+      example:
+        rowHeaders:
+        - rowHeaders
+        - rowHeaders
+        data:
+        - - 5
+          - 5
+        - - 5
+          - 5
+        historyTruncated: true
+        colHeaders:
+        - colHeaders
+        - colHeaders
+        totalUsage: 1
+        periodStart: 0
+        timeUnit: timeUnit
+        periodEnd: 6
       properties:
         timeUnit:
+          description: Time unit is DAY, WEEK or MONTH depending on prior usage
           type: string
         periodStart:
+          description: Start datetime of the reporting period
           format: int64
           type: integer
         periodEnd:
+          description: End datetime of the reporting period
           format: int64
           type: integer
         totalUsage:
+          description: Total usage in the current period
           format: int64
           type: integer
         historyTruncated:
+          description: If the history was truncaded due to data limit
           type: boolean
         data:
+          description: 'Data points : usage per DAY, WEEK or MONTH and per apiService'
           items:
+            description: 'Data points : usage per DAY, WEEK or MONTH and per apiService'
             items:
+              description: 'Data points : usage per DAY, WEEK or MONTH and per apiService'
               format: int32
               type: integer
             type: array
           type: array
         colHeaders:
+          description: 'apiServices as column headers '
           items:
+            description: 'apiServices as column headers '
             type: string
           type: array
         rowHeaders:
+          description: 'dates as row headers '
           items:
+            description: 'dates as row headers '
             type: string
           type: array
       type: object
       xml:
         name: APIUsageAggregatedOut
     APIServicesOut:
+      example:
+        apiServices:
+        - costInUnits: 0
+          serviceGroup: serviceGroup
+          serviceName: serviceName
+        - costInUnits: 0
+          serviceGroup: serviceGroup
+          serviceName: serviceName
       properties:
         apiServices:
+          description: List of API Services
           items:
             $ref: '#/components/schemas/APIServiceOut'
           type: array
@@ -4495,119 +3458,12 @@ components:
       type: object
       xml:
         name: BatchNameIn
-    InvoiceOut:
-      example:
-        dueDate: 2000-01-23T04:56:07.000+00:00
-        description: description
-        isStriped: true
-        tax: 7
-        subTotal: 2
-        invoiceDate: 2000-01-23T04:56:07.000+00:00
-        userId: userId
-        amountDue: 1
-        invoicePdf: invoicePdf
-        total: 3
-        amountPaid: 5
-        amountRemaining: 5
-        taxPercent: 9
-        invoiceId: invoiceId
-        currency: currency
-        attempted: true
-        stripeCustomerId: stripeCustomerId
-        invoiceStatus: invoiceStatus
-        items:
-        - itemId: itemId
-          amount: 0
-          quantity: 6
-          planDesc: planDesc
-          planNickname: planNickname
-          description: description
-          planName: planName
-          currency: currency
-          subscription: subscription
-          subscriptionItem: subscriptionItem
-          invoiceItemType: invoiceItemType
-        - itemId: itemId
-          amount: 0
-          quantity: 6
-          planDesc: planDesc
-          planNickname: planNickname
-          description: description
-          planName: planName
-          currency: currency
-          subscription: subscription
-          subscriptionItem: subscriptionItem
-          invoiceItemType: invoiceItemType
-        periodStart: 2000-01-23T04:56:07.000+00:00
-        receiptNumber: receiptNumber
-        periodEnd: 2000-01-23T04:56:07.000+00:00
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/InvoiceItemOut'
-          type: array
-        userId:
-          type: string
-        invoiceId:
-          type: string
-        isStriped:
-          type: boolean
-        stripeCustomerId:
-          type: string
-        amountDue:
-          format: int64
-          type: integer
-        amountPaid:
-          format: int64
-          type: integer
-        amountRemaining:
-          format: int64
-          type: integer
-        attempted:
-          type: boolean
-        currency:
-          type: string
-        invoiceDate:
-          format: date-time
-          type: string
-        dueDate:
-          format: date-time
-          type: string
-        description:
-          type: string
-        invoicePdf:
-          type: string
-        periodStart:
-          format: date-time
-          type: string
-        periodEnd:
-          format: date-time
-          type: string
-        receiptNumber:
-          type: string
-        invoiceStatus:
-          type: string
-        subTotal:
-          format: int64
-          type: integer
-        tax:
-          format: int64
-          type: integer
-        taxPercent:
-          format: int64
-          type: integer
-        total:
-          format: int64
-          type: integer
-      type: object
-      xml:
-        name: InvoiceOut
     FirstLastNameOut:
+      description: First / last name structure corresponding to the most likely parsing.
       example:
         firstName: firstName
         lastName: lastName
         id: id
-        category: category
         script: script
       properties:
         script:
@@ -4615,10 +3471,10 @@ components:
         id:
           type: string
         firstName:
+          description: The first name (also known as given name)
           type: string
         lastName:
-          type: string
-        category:
+          description: The last name (also known as family name, or surname)
           type: string
       type: object
       xml:
@@ -4630,210 +3486,36 @@ components:
         - firstName: firstName
           lastName: lastName
           raceEthnicityAlt: W_NL
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 8.0082819046101150206595775671303272247314453125
           raceEthnicitiesTop:
           - raceEthnicitiesTop
           - raceEthnicitiesTop
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           id: id
-          category: category
           script: script
           raceEthnicity: W_NL
         - firstName: firstName
           lastName: lastName
           raceEthnicityAlt: W_NL
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 8.0082819046101150206595775671303272247314453125
           raceEthnicitiesTop:
           - raceEthnicitiesTop
           - raceEthnicitiesTop
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           id: id
-          category: category
           script: script
           raceEthnicity: W_NL
       properties:
         personalNames:
+          description: Classified US 'race'/ethnicized names
           items:
             $ref: '#/components/schemas/FirstLastNameUSRaceEthnicityOut'
           type: array
       type: object
       xml:
         name: BatchFirstLastNameUSRaceEthnicityOut
-    SystemMetricsOut:
-      example:
-        sourceMetrics:
-        - snapshotDate: 6
-          aiLearnTotal: 2
-          metricTimeStamp: 6
-          aiEstimatePrecision: 6.438423552598546706349225132726132869720458984375
-          aiStartTime: 1
-          aiEstimateTotal: 9
-          source:
-            striped: true
-            apiKey: apiKey
-            partner: true
-            corporate: true
-            anonymized: true
-            learnable: true
-            admin: true
-            disabled: true
-            userId: userId
-            vetted: true
-          classifierName: classifierName
-          aiEstimateRecall: 3.557195227068097320710649000830017030239105224609375
-        - snapshotDate: 6
-          aiLearnTotal: 2
-          metricTimeStamp: 6
-          aiEstimatePrecision: 6.438423552598546706349225132726132869720458984375
-          aiStartTime: 1
-          aiEstimateTotal: 9
-          source:
-            striped: true
-            apiKey: apiKey
-            partner: true
-            corporate: true
-            anonymized: true
-            learnable: true
-            admin: true
-            disabled: true
-            userId: userId
-            vetted: true
-          classifierName: classifierName
-          aiEstimateRecall: 3.557195227068097320710649000830017030239105224609375
-        totalMem: 6
-        cacheMetrics:
-        - cacheName: cacheName
-          cacheStats: cacheStats
-        - cacheName: cacheName
-          cacheStats: cacheStats
-        freeMem: 5
-        classifierMetrics:
-        - featuresSize: 2
-          aiNonVettedExpectedClassMetrics:
-          - aiLearnTotal: 8
-            aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-            expectedClass: expectedClass
-            aiEstimateTotal: 9
-            classifierName: classifierName
-            aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-          - aiLearnTotal: 8
-            aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-            expectedClass: expectedClass
-            aiEstimateTotal: 9
-            classifierName: classifierName
-            aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-          aiVettedEstimatePrecision: 7.3862819483858839220147274318151175975799560546875
-          aiStartTime: 5
-          aiVettedExpectedClassMetrics:
-          - aiLearnTotal: 8
-            aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-            expectedClass: expectedClass
-            aiEstimateTotal: 9
-            classifierName: classifierName
-            aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-          - aiLearnTotal: 8
-            aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-            expectedClass: expectedClass
-            aiEstimateTotal: 9
-            classifierName: classifierName
-            aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-          classifyDurationsCurrent: 2.3021358869347654518833223846741020679473876953125
-          learnDurationsCurrent: 9.301444243932575517419536481611430644989013671875
-          aiNonVettedEstimatePrecision: 6.8468526983526398765889098285697400569915771484375
-          classifierName: classifierName
-          classifyDurationsSummary: 7.061401241503109105224211816675961017608642578125
-          factsLearned: 5
-          aiNonVettedEstimateTotal: 1
-          aiVettedLearnTotal: 1
-          learnDurationsSummary: 3.61607674925191080461672754609026014804840087890625
-          aiVettedEstimateRecall: 1.231513536777255612975068288506008684635162353515625
-          learnQueueSize: 0
-          metricTimeStamp: 4
-          aiNonVettedEstimateRecall: 7.4577447736837658709418974467553198337554931640625
-          preClassifyQueueSize: 1
-          hostAddress: hostAddress
-          aiNonVettedLearnTotal: 1
-          factKeysSize: 5
-          softwareVersion: softwareVersion
-          bufferSize: 6
-          aiVettedEstimateTotal: 4
-        - featuresSize: 2
-          aiNonVettedExpectedClassMetrics:
-          - aiLearnTotal: 8
-            aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-            expectedClass: expectedClass
-            aiEstimateTotal: 9
-            classifierName: classifierName
-            aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-          - aiLearnTotal: 8
-            aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-            expectedClass: expectedClass
-            aiEstimateTotal: 9
-            classifierName: classifierName
-            aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-          aiVettedEstimatePrecision: 7.3862819483858839220147274318151175975799560546875
-          aiStartTime: 5
-          aiVettedExpectedClassMetrics:
-          - aiLearnTotal: 8
-            aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-            expectedClass: expectedClass
-            aiEstimateTotal: 9
-            classifierName: classifierName
-            aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-          - aiLearnTotal: 8
-            aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-            expectedClass: expectedClass
-            aiEstimateTotal: 9
-            classifierName: classifierName
-            aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-          classifyDurationsCurrent: 2.3021358869347654518833223846741020679473876953125
-          learnDurationsCurrent: 9.301444243932575517419536481611430644989013671875
-          aiNonVettedEstimatePrecision: 6.8468526983526398765889098285697400569915771484375
-          classifierName: classifierName
-          classifyDurationsSummary: 7.061401241503109105224211816675961017608642578125
-          factsLearned: 5
-          aiNonVettedEstimateTotal: 1
-          aiVettedLearnTotal: 1
-          learnDurationsSummary: 3.61607674925191080461672754609026014804840087890625
-          aiVettedEstimateRecall: 1.231513536777255612975068288506008684635162353515625
-          learnQueueSize: 0
-          metricTimeStamp: 4
-          aiNonVettedEstimateRecall: 7.4577447736837658709418974467553198337554931640625
-          preClassifyQueueSize: 1
-          hostAddress: hostAddress
-          aiNonVettedLearnTotal: 1
-          factKeysSize: 5
-          softwareVersion: softwareVersion
-          bufferSize: 6
-          aiVettedEstimateTotal: 4
-        maxMem: 6
-      properties:
-        cacheMetrics:
-          items:
-            $ref: '#/components/schemas/CacheMetricsOut'
-          type: array
-        classifierMetrics:
-          items:
-            $ref: '#/components/schemas/ClassifierMetricsOut'
-          type: array
-        sourceMetrics:
-          items:
-            $ref: '#/components/schemas/SourceMetricsOut'
-          type: array
-        totalMem:
-          format: int64
-          type: integer
-        freeMem:
-          format: int64
-          type: integer
-        maxMem:
-          format: int64
-          type: integer
-      type: object
-      xml:
-        name: SystemMetricsOut
     BatchPersonalNameIn:
       example:
         personalNames:
@@ -4863,7 +3545,7 @@ components:
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            score: 0.80082819046101150206595775671303272247314453125
+            score: 8.0082819046101150206595775671303272247314453125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -4871,7 +3553,6 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
-            category: category
             countryOriginAlt: countryOriginAlt
         - firstName: firstName
           lastName: lastName
@@ -4884,7 +3565,7 @@ components:
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            score: 0.80082819046101150206595775671303272247314453125
+            score: 8.0082819046101150206595775671303272247314453125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -4892,7 +3573,6 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
-            category: category
             countryOriginAlt: countryOriginAlt
       properties:
         personalNamesWithPhoneNumbers:
@@ -4902,35 +3582,6 @@ components:
       type: object
       xml:
         name: BatchFirstLastNamePhoneNumberIn
-    APIPlansOut:
-      example:
-        plans:
-        - planQuota: 6
-          price: 1.46581298050294517310021547018550336360931396484375
-          planName: planName
-          priceOverage: 5.962133916683182377482808078639209270477294921875
-        - planQuota: 6
-          price: 1.46581298050294517310021547018550336360931396484375
-          planName: planName
-          priceOverage: 5.962133916683182377482808078639209270477294921875
-        currencyIso3: currencyIso3
-        currencySymbol: currencySymbol
-        usageRatioForDupplicates: 0
-      properties:
-        usageRatioForDupplicates:
-          format: int64
-          type: integer
-        currencyIso3:
-          type: string
-        currencySymbol:
-          type: string
-        plans:
-          items:
-            $ref: '#/components/schemas/APIPlanOut'
-          type: array
-      type: object
-      xml:
-        name: APIPlansOut
     NameGeoIn:
       example:
         name: name
@@ -4961,7 +3612,7 @@ components:
         verified: true
         script: script
         firstName: firstName
-        score: 1.46581298050294517310021547018550336360931396484375
+        score: 14.6581298050294517310021547018550336360931396484375
         phoneNumber: phoneNumber
         phoneCountryCode: 0
         phoneCountryIso2: phoneCountryIso2
@@ -4971,49 +3622,71 @@ components:
         internationalPhoneNumberVerified: internationalPhoneNumberVerified
         phoneCountryCodeAlt: 6
         countryIso2: countryIso2
-        category: category
       properties:
         script:
           type: string
         id:
           type: string
         firstName:
+          description: The first name (also known as given name)
           type: string
         lastName:
+          description: The last name (also known as family name, or surname)
           type: string
         internationalPhoneNumberVerified:
+          description: The normalized phone number, verified using libphonenumber.
           type: string
         phoneCountryIso2Verified:
+          description: The phone ISO2 country code, verified using libphonenumber.
           type: string
         phoneCountryCode:
+          description: The phone country code of the phone number, verified using libphonenumber.
           format: int32
           type: integer
         phoneCountryCodeAlt:
+          description: The best alternative phone country code of the phone number.
           format: int32
           type: integer
         phoneCountryIso2:
+          description: The likely country of the phone number.
           type: string
         phoneCountryIso2Alt:
+          description: The best alternative country of the phone number.
           type: string
         originCountryIso2:
+          description: The likely country of origin of the name.
           type: string
         originCountryIso2Alt:
+          description: The best alternative country of origin of the name.
           type: string
         phoneNumber:
+          description: The input phone number.
           type: string
         verified:
+          description: Indicates if the phone number could be positively verified using libphonenumber.
           type: boolean
         score:
+          description: 'Higher score is better, but score is not normalized. Use calibratedProbability
+            if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
         countryIso2:
-          type: string
-        category:
           type: string
       type: object
       xml:
         name: FirstLastNamePhoneCodedOut
     MatchPersonalFirstLastNameIn:
+      example:
+        id: id
+        name2:
+          name: name
+          id: id
+        name1:
+          firstName: firstName
+          lastName: lastName
+          id: id
       properties:
         id:
           type: string
@@ -5028,16 +3701,14 @@ components:
         name: MatchPersonalFirstLastNameIn
     PersonalNameParsedOut:
       example:
-        score: 0.80082819046101150206595775671303272247314453125
+        score: 8.0082819046101150206595775671303272247314453125
         firstLastName:
           firstName: firstName
           lastName: lastName
           id: id
-          category: category
           script: script
         name: name
         id: id
-        category: category
         script: script
         nameParserTypeAlt: nameParserTypeAlt
         nameParserType: nameParserType
@@ -5047,50 +3718,26 @@ components:
         id:
           type: string
         name:
+          description: The input name
           type: string
         nameParserType:
+          description: Name parsing is addressed as a classification problem, for example FN1LN1 means a first then last name order.
           type: string
         nameParserTypeAlt:
+          description: Second best alternative parsing. Name parsing is addressed as a classification problem, for example FN1LN1 means a first then last name order.
           type: string
         firstLastName:
           $ref: '#/components/schemas/FirstLastNameOut'
         score:
+          description: 'Higher score is better, but score is not normalized. Use calibratedProbability
+            if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
-        category:
-          type: string
       type: object
       xml:
         name: PersonalNameParsedOut
-    ExpectedClassMetricsOut:
-      description: Simple metrics on a classifier, for a given expected class
-      example:
-        aiLearnTotal: 8
-        aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-        expectedClass: expectedClass
-        aiEstimateTotal: 9
-        classifierName: classifierName
-        aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-      properties:
-        classifierName:
-          type: string
-        expectedClass:
-          type: string
-        aiEstimateTotal:
-          format: int64
-          type: integer
-        aiEstimatePrecision:
-          format: double
-          type: number
-        aiEstimateRecall:
-          format: double
-          type: number
-        aiLearnTotal:
-          format: int64
-          type: integer
-      type: object
-      xml:
-        name: ExpectedClassMetricsOut
     BatchFirstLastNameGeoZippedIn:
       example:
         personalNames:
@@ -5122,7 +3769,7 @@ components:
           regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 8.0082819046101150206595775671303272247314453125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -5130,7 +3777,6 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
-          category: category
           countryOriginAlt: countryOriginAlt
         - lastName: lastName
           probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
@@ -5138,7 +3784,7 @@ components:
           regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 8.0082819046101150206595775671303272247314453125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -5146,10 +3792,10 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
-          category: category
           countryOriginAlt: countryOriginAlt
       properties:
         personalNames:
+          description: Classified origined names
           items:
             $ref: '#/components/schemas/FirstLastNameOriginedOut'
           type: array
@@ -5219,13 +3865,12 @@ components:
         - FirstLastNameDiasporaedOut:
             firstName: firstName
             lastName: lastName
-            score: 5.962133916683182377482808078639209270477294921875
-            ethnicity: ethnicity
+            score: 59.62133916683182377482808078639209270477294921875
+            ethnicity: Chinese
             lifted: true
-            ethnicityAlt: ethnicityAlt
+            ethnicityAlt: Japanese
             id: id
             countryIso2: countryIso2
-            category: category
             ethnicitiesTop:
             - ethnicitiesTop
             - ethnicitiesTop
@@ -5234,14 +3879,12 @@ components:
             firstName: firstName
             lastName: lastName
             genderScale: 0.80082819046101150206595775671303272247314453125
-            score: 6.02745618307040320615897144307382404804229736328125
+            score: 60.2745618307040302852328750304877758026123046875
             probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
             likelyGender: male
             id: id
-            category: category
             script: script
           id: id
-          category: category
           script: script
           FirstLastNameOriginedOut:
             lastName: lastName
@@ -5250,7 +3893,7 @@ components:
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            score: 0.80082819046101150206595775671303272247314453125
+            score: 8.0082819046101150206595775671303272247314453125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -5258,18 +3901,16 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
-            category: category
             countryOriginAlt: countryOriginAlt
         - FirstLastNameDiasporaedOut:
             firstName: firstName
             lastName: lastName
-            score: 5.962133916683182377482808078639209270477294921875
-            ethnicity: ethnicity
+            score: 59.62133916683182377482808078639209270477294921875
+            ethnicity: Chinese
             lifted: true
-            ethnicityAlt: ethnicityAlt
+            ethnicityAlt: Japanese
             id: id
             countryIso2: countryIso2
-            category: category
             ethnicitiesTop:
             - ethnicitiesTop
             - ethnicitiesTop
@@ -5278,14 +3919,12 @@ components:
             firstName: firstName
             lastName: lastName
             genderScale: 0.80082819046101150206595775671303272247314453125
-            score: 6.02745618307040320615897144307382404804229736328125
+            score: 60.2745618307040302852328750304877758026123046875
             probabilityCalibrated: 1.46581298050294517310021547018550336360931396484375
             likelyGender: male
             id: id
-            category: category
             script: script
           id: id
-          category: category
           script: script
           FirstLastNameOriginedOut:
             lastName: lastName
@@ -5294,7 +3933,7 @@ components:
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            score: 0.80082819046101150206595775671303272247314453125
+            score: 8.0082819046101150206595775671303272247314453125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -5302,10 +3941,10 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
-            category: category
             countryOriginAlt: countryOriginAlt
       properties:
         corridorFromTo:
+          description: Classified corridors
           items:
             $ref: '#/components/schemas/CorridorOut'
           type: array
@@ -5351,17 +3990,26 @@ components:
       xml:
         name: FirstLastName
     APIClassifierTaxonomyOut:
+      example:
+        taxonomyClasses:
+        - taxonomyClasses
+        - taxonomyClasses
+        classifierName: classifierName
       properties:
         classifierName:
+          description: Name of the classifier as per apiStatus (corresponds also to the name of the service in apiServices)
           type: string
         taxonomyClasses:
+          description: The taxonomy classes this classifier classifies to
           items:
+            description: The taxonomy classes this classifier classifies to
             type: string
           type: array
       type: object
       xml:
         name: APIClassifierTaxonomyOut
     NameMatchCandidateOut:
+      description: The ordered list of name matching candidates
       example:
         predScoreGivenName: 6.02745618307040320615897144307382404804229736328125
         candidateName: candidateName
@@ -5369,34 +4017,71 @@ components:
         predScoreFamilyName: 1.46581298050294517310021547018550336360931396484375
       properties:
         candidateName:
+          description: The name matching candidate name
           type: string
         probability:
+          description: The name matching estimated probability.
           format: double
           type: number
         predScoreGivenName:
+          description: The given name prediction score.
           format: double
           type: number
         predScoreFamilyName:
+          description: The family name prediction score.
           format: double
           type: number
       type: object
       xml:
         name: NameMatchCandidateOut
-    StripeCustomerOut:
+    APIUsageHistoryOut:
+      example:
+        detailedUsage:
+        - apiKey:
+            striped: true
+            apiKey: apiKey
+            partner: true
+            corporate: true
+            anonymized: true
+            learnable: true
+            admin: true
+            disabled: true
+            userId: userId
+            vetted: true
+          serviceFeaturesUsage:
+            key: 5
+          apiService: apiService
+          createdDateTime: 0
+          lastFlushedDateTime: 1
+          totalUsage: 6
+          lastUsedDateTime: 5
+        - apiKey:
+            striped: true
+            apiKey: apiKey
+            partner: true
+            corporate: true
+            anonymized: true
+            learnable: true
+            admin: true
+            disabled: true
+            userId: userId
+            vetted: true
+          serviceFeaturesUsage:
+            key: 5
+          apiService: apiService
+          createdDateTime: 0
+          lastFlushedDateTime: 1
+          totalUsage: 6
+          lastUsedDateTime: 5
       properties:
-        stripeCustomerId:
-          type: string
-        sourceCountry:
-          type: string
-        sourceCurrency:
-          type: string
-        stripedCards:
+        detailedUsage:
+          description: Detailed usage as reported by the deduplicating API counter.
           items:
-            $ref: '#/components/schemas/StripeCardOut'
+            $ref: '#/components/schemas/APICounterV2Out'
           type: array
       type: object
       xml:
-        name: StripeCustomerOut
+        name: APIUsageHistoryOut
     BatchFirstLastNamePhoneCodedOut:
       description: Represents the output of inferring the LIKELY country and phone code of personal names+phones.
       example:
@@ -5407,7 +4092,7 @@ components:
           verified: true
           script: script
           firstName: firstName
-          score: 1.46581298050294517310021547018550336360931396484375
+          score: 14.6581298050294517310021547018550336360931396484375
           phoneNumber: phoneNumber
           phoneCountryCode: 0
           phoneCountryIso2: phoneCountryIso2
@@ -5417,14 +4102,13 @@ components:
           internationalPhoneNumberVerified: internationalPhoneNumberVerified
           phoneCountryCodeAlt: 6
           countryIso2: countryIso2
-          category: category
         - lastName: lastName
           originCountryIso2Alt: originCountryIso2Alt
           phoneCountryIso2Verified: phoneCountryIso2Verified
           verified: true
           script: script
           firstName: firstName
-          score: 1.46581298050294517310021547018550336360931396484375
+          score: 14.6581298050294517310021547018550336360931396484375
           phoneNumber: phoneNumber
           phoneCountryCode: 0
           phoneCountryIso2: phoneCountryIso2
@@ -5434,9 +4118,9 @@ components:
           internationalPhoneNumberVerified: internationalPhoneNumberVerified
           phoneCountryCodeAlt: 6
           countryIso2: countryIso2
-          category: category
       properties:
         personalNamesWithPhoneNumbers:
+          description: Classified phone-coded names
           items:
             $ref: '#/components/schemas/FirstLastNamePhoneCodedOut'
           type: array
@@ -5449,14 +4133,13 @@ components:
         firstName: firstName
         lastName: lastName
         raceEthnicityAlt: W_NL
-        score: 0.80082819046101150206595775671303272247314453125
+        score: 8.0082819046101150206595775671303272247314453125
         raceEthnicitiesTop:
         - raceEthnicitiesTop
         - raceEthnicitiesTop
         probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
         probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
         id: id
-        category: category
         script: script
         raceEthnicity: W_NL
       properties:
@@ -5465,8 +4148,10 @@ components:
         id:
           type: string
         firstName:
+          description: The first name (also known as given name)
           type: string
         lastName:
+          description: The last name (also known as family name, or surname)
           type: string
         raceEthnicityAlt:
           description: Second most likely US 'race'/ethnicity
@@ -5475,6 +4160,8 @@ components:
           - HL
           - A
           - B_NL
+          - AI_AN
+          - PI
           type: string
           xml:
             attribute: true
@@ -5485,12 +4172,17 @@ components:
           - HL
           - A
           - B_NL
+          - AI_AN
+          - PI
           type: string
           xml:
             attribute: true
         score:
-          description: Compatibility to NamSor_v1 Origin score value
+          description: 'Higher score is better, but score is not normalized. Use calibratedProbability
+            if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
         raceEthnicitiesTop:
           description: List 'race'/ethnicities
@@ -5499,13 +4191,13 @@ components:
             type: string
           type: array
         probabilityCalibrated:
+          description: The calibrated probability for raceEthnicity to have been guessed correctly.
           format: double
           type: number
         probabilityAltCalibrated:
+          description: The calibrated probability for raceEthnicity OR raceEthnicityAlt to have been guessed correctly.
           format: double
           type: number
-        category:
-          type: string
       type: object
       xml:
         name: FirstLastNameUSRaceEthnicityOut
@@ -5525,7 +4217,7 @@ components:
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            score: 0.80082819046101150206595775671303272247314453125
+            score: 8.0082819046101150206595775671303272247314453125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -5533,7 +4225,6 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
-            category: category
             countryOriginAlt: countryOriginAlt
         - firstName: firstName
           lastName: lastName
@@ -5548,7 +4239,7 @@ components:
             regionOrigin: regionOrigin
             topRegionOrigin: topRegionOrigin
             firstName: firstName
-            score: 0.80082819046101150206595775671303272247314453125
+            score: 8.0082819046101150206595775671303272247314453125
             subRegionOrigin: subRegionOrigin
             probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
             countriesOriginTop:
@@ -5556,7 +4247,6 @@ components:
             - countriesOriginTop
             id: id
             countryOrigin: countryOrigin
-            category: category
             countryOriginAlt: countryOriginAlt
       properties:
         personalNamesWithPhoneNumbers:
@@ -5566,29 +4256,6 @@ components:
       type: object
       xml:
         name: BatchFirstLastNamePhoneNumberGeoIn
-    BatchParsedFullNameIn:
-      example:
-        personalNames:
-        - firstName: firstName
-          lastName: lastName
-          prefixOrTitle: prefixOrTitle
-          middleName: middleName
-          id: id
-          suffix: suffix
-        - firstName: firstName
-          lastName: lastName
-          prefixOrTitle: prefixOrTitle
-          middleName: middleName
-          id: id
-          suffix: suffix
-      properties:
-        personalNames:
-          items:
-            $ref: '#/components/schemas/ParsedFullNameIn'
-          type: array
-      type: object
-      xml:
-        name: BatchParsedFullNameIn
     PersonalNameGeoIn:
       example:
         name: name
@@ -5611,12 +4278,20 @@ components:
       xml:
         name: PersonalNameGeoIn
     APIServiceOut:
+      description: List of API Services
+      example:
+        costInUnits: 0
+        serviceGroup: serviceGroup
+        serviceName: serviceName
       properties:
         serviceName:
+          description: A service name corresponds to classifier name in apiStatus (ex. personalname_gender or personalfullname_gender)
           type: string
         serviceGroup:
+          description: Groups together classifiers providing a similar service (ex. gender groups personalname_gender and personalfullname_gender)
           type: string
         costInUnits:
+          description: Indicates how many units per call this service costs (ex. the number of units per name)
           format: int32
           type: integer
       type: object
@@ -5626,22 +4301,21 @@ components:
       description: Represents the output of inferring the common type (anthroponym, toponym, brand, etc.) from a list of proper names.
       example:
         properNouns:
-        - score: 0.80082819046101150206595775671303272247314453125
+        - score: 8.0082819046101150206595775671303272247314453125
           commonTypeAlt: commonTypeAlt
           name: name
           id: id
-          category: category
           script: script
           commonType: commonType
-        - score: 0.80082819046101150206595775671303272247314453125
+        - score: 8.0082819046101150206595775671303272247314453125
           commonTypeAlt: commonTypeAlt
           name: name
           id: id
-          category: category
           script: script
           commonType: commonType
       properties:
         properNouns:
+          description: Classified typed proper names
           items:
             $ref: '#/components/schemas/ProperNounCategorizedOut'
           type: array
@@ -5665,96 +4339,46 @@ components:
       type: object
       xml:
         name: BatchFirstLastNameIn
-    ParsedFullNameIn:
-      example:
-        firstName: firstName
-        lastName: lastName
-        prefixOrTitle: prefixOrTitle
-        middleName: middleName
-        id: id
-        suffix: suffix
-      properties:
-        id:
-          type: string
-          xml:
-            attribute: true
-        firstName:
-          type: string
-          xml:
-            attribute: true
-        lastName:
-          type: string
-          xml:
-            attribute: true
-        prefixOrTitle:
-          type: string
-          xml:
-            attribute: true
-        suffix:
-          type: string
-          xml:
-            attribute: true
-        middleName:
-          type: string
-          xml:
-            attribute: true
-      type: object
-      xml:
-        name: ParsedFullNameIn
-    RomanizedNameOut:
-      example:
-        originalName: originalName
-        score: 0.80082819046101150206595775671303272247314453125
-        sourceScript: sourceScript
-        targetLanguage: targetLanguage
-        id: id
-        targetScript: targetScript
-        latinName: latinName
-        category: category
-        script: script
-        sourceLanguage: sourceLanguage
-      properties:
-        script:
-          type: string
-        id:
-          type: string
-        latinName:
-          type: string
-        originalName:
-          type: string
-        sourceLanguage:
-          type: string
-        targetLanguage:
-          type: string
-        sourceScript:
-          type: string
-        targetScript:
-          type: string
-        score:
-          format: double
-          type: number
-        category:
-          type: string
-      type: object
-      xml:
-        name: RomanizedNameOut
     NameMatchedOut:
+      description: Classified matched names
+      example:
+        score: 0.80082819046101150206595775671303272247314453125
+        matchStatus: matchStatus
+        id: id
+        script: script
       properties:
         script:
           type: string
         id:
           type: string
         matchStatus:
+          description: The name matching status.
           type: string
         score:
           format: double
           type: number
-        category:
-          type: string
       type: object
       xml:
         name: NameMatchedOut
     BatchMatchPersonalFirstLastNameIn:
+      example:
+        personalNames:
+        - id: id
+          name2:
+            name: name
+            id: id
+          name1:
+            firstName: firstName
+            lastName: lastName
+            id: id
+        - id: id
+          name2:
+            name: name
+            id: id
+          name1:
+            firstName: firstName
+            lastName: lastName
+            id: id
       properties:
         personalNames:
           items:
@@ -5778,7 +4402,7 @@ components:
           regionOrigin: regionOrigin
           topRegionOrigin: topRegionOrigin
           firstName: firstName
-          score: 0.80082819046101150206595775671303272247314453125
+          score: 8.0082819046101150206595775671303272247314453125
           subRegionOrigin: subRegionOrigin
           probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
           countriesOriginTop:
@@ -5786,7 +4410,6 @@ components:
           - countriesOriginTop
           id: id
           countryOrigin: countryOrigin
-          category: category
           countryOriginAlt: countryOriginAlt
       properties:
         id:
@@ -5812,172 +4435,52 @@ components:
       type: object
       xml:
         name: FirstLastNamePhoneNumberGeoIn
-    ClassifierMetricsOut:
-      description: Simple metrics on a classifier
-      example:
-        featuresSize: 2
-        aiNonVettedExpectedClassMetrics:
-        - aiLearnTotal: 8
-          aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-          expectedClass: expectedClass
-          aiEstimateTotal: 9
-          classifierName: classifierName
-          aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-        - aiLearnTotal: 8
-          aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-          expectedClass: expectedClass
-          aiEstimateTotal: 9
-          classifierName: classifierName
-          aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-        aiVettedEstimatePrecision: 7.3862819483858839220147274318151175975799560546875
-        aiStartTime: 5
-        aiVettedExpectedClassMetrics:
-        - aiLearnTotal: 8
-          aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-          expectedClass: expectedClass
-          aiEstimateTotal: 9
-          classifierName: classifierName
-          aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-        - aiLearnTotal: 8
-          aiEstimatePrecision: 9.3693102714106686335071572102606296539306640625
-          expectedClass: expectedClass
-          aiEstimateTotal: 9
-          classifierName: classifierName
-          aiEstimateRecall: 6.683562403749608193948006373830139636993408203125
-        classifyDurationsCurrent: 2.3021358869347654518833223846741020679473876953125
-        learnDurationsCurrent: 9.301444243932575517419536481611430644989013671875
-        aiNonVettedEstimatePrecision: 6.8468526983526398765889098285697400569915771484375
-        classifierName: classifierName
-        classifyDurationsSummary: 7.061401241503109105224211816675961017608642578125
-        factsLearned: 5
-        aiNonVettedEstimateTotal: 1
-        aiVettedLearnTotal: 1
-        learnDurationsSummary: 3.61607674925191080461672754609026014804840087890625
-        aiVettedEstimateRecall: 1.231513536777255612975068288506008684635162353515625
-        learnQueueSize: 0
-        metricTimeStamp: 4
-        aiNonVettedEstimateRecall: 7.4577447736837658709418974467553198337554931640625
-        preClassifyQueueSize: 1
-        hostAddress: hostAddress
-        aiNonVettedLearnTotal: 1
-        factKeysSize: 5
-        softwareVersion: softwareVersion
-        bufferSize: 6
-        aiVettedEstimateTotal: 4
-      properties:
-        softwareVersion:
-          type: string
-        hostAddress:
-          type: string
-        learnQueueSize:
-          format: int32
-          type: integer
-        bufferSize:
-          format: int32
-          type: integer
-        preClassifyQueueSize:
-          format: int32
-          type: integer
-        factKeysSize:
-          format: int32
-          type: integer
-        factsLearned:
-          format: int64
-          type: integer
-        classifyDurationsCurrent:
-          format: double
-          type: number
-        classifyDurationsSummary:
-          format: double
-          type: number
-        learnDurationsCurrent:
-          format: double
-          type: number
-        learnDurationsSummary:
-          format: double
-          type: number
-        classifierName:
-          type: string
-        featuresSize:
-          format: int64
-          type: integer
-        aiVettedEstimateTotal:
-          format: int64
-          type: integer
-        aiVettedEstimatePrecision:
-          format: double
-          type: number
-        aiVettedEstimateRecall:
-          format: double
-          type: number
-        aiVettedLearnTotal:
-          format: int64
-          type: integer
-        aiNonVettedEstimateTotal:
-          format: int64
-          type: integer
-        aiNonVettedEstimatePrecision:
-          format: double
-          type: number
-        aiNonVettedEstimateRecall:
-          format: double
-          type: number
-        aiNonVettedLearnTotal:
-          format: int64
-          type: integer
-        metricTimeStamp:
-          format: int64
-          type: integer
-        aiStartTime:
-          format: int64
-          type: integer
-        aiVettedExpectedClassMetrics:
-          items:
-            $ref: '#/components/schemas/ExpectedClassMetricsOut'
-          type: array
-        aiNonVettedExpectedClassMetrics:
-          items:
-            $ref: '#/components/schemas/ExpectedClassMetricsOut'
-          type: array
-      type: object
-      xml:
-        name: ClassifierMetricsOut
     PersonalNameGeoOut:
+      description: Classified geo names
       example:
+        score: 8.0082819046101150206595775671303272247314453125
         country: country
         topRegion: topRegion
         subRegion: subRegion
         probabilityCalibrated: 6.02745618307040320615897144307382404804229736328125
-        countryAlt: countryAlt
-        script: script
-        score: 0.80082819046101150206595775671303272247314453125
         countriesTop:
         - countriesTop
         - countriesTop
         name: name
+        countryAlt: countryAlt
         probabilityAltCalibrated: 1.46581298050294517310021547018550336360931396484375
         id: id
         region: region
-        category: category
+        script: script
       properties:
         script:
           type: string
         id:
           type: string
         name:
+          description: The input name.
           type: string
         score:
+          description: 'Higher score is better, but score is not normalized. Use calibratedProbability
+            if available. '
           format: double
+          maximum: 100
+          minimum: 0
           type: number
         country:
+          description: 'Most likely country '
           type: string
         countryAlt:
+          description: 'Second best alternative : country '
           type: string
         region:
+          description: Most likely region (based on country ISO2 code)
           type: string
         topRegion:
+          description: Most likely top region (based on country ISO2 code)
           type: string
         subRegion:
+          description: Most likely sub region (based on country ISO2 code)
           type: string
         countriesTop:
           description: List countries (top 10)
@@ -5986,13 +4489,13 @@ components:
             type: string
           type: array
         probabilityCalibrated:
+          description: The calibrated probability for country to have been guessed correctly.
           format: double
           type: number
         probabilityAltCalibrated:
+          description: The calibrated probability for country OR countryAlt to have been guessed correctly.
           format: double
           type: number
-        category:
-          type: string
       type: object
       xml:
         name: PersonalNameGeoOut
@@ -6015,26 +4518,6 @@ components:
       type: object
       xml:
         name: BatchFirstLastNameGeoIn
-    CurrenciesOut:
-      example:
-        currenciesIso3:
-        - currenciesIso3
-        - currenciesIso3
-      properties:
-        currenciesIso3:
-          items:
-            type: string
-          type: array
-      type: object
-      xml:
-        name: CurrenciesOut
-    inline_object:
-      properties:
-        stripeToken:
-          type: string
-        stripeEmail:
-          type: string
-      type: object
   securitySchemes:
     api_key:
       description: api_key required
